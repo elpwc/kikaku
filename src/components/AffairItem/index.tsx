@@ -5,5 +5,5 @@ interface Props {
 }
 
 export default (props: Props) => {
-  return <div className="AffairItem">{props.affair.name}</div>;
+  return <div className="AffairItem text-sm">{props.affair.name}</div>;
 };

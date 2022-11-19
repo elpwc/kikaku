@@ -1,9 +1,12 @@
 import { useEffect } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router';
-import { Link } from 'react-router-dom';
+import { Affair } from '../../utils/Affair';
+import AffairItem from '../AffairItem';
 import './index.css';
 
-interface P {}
+interface P {
+  affairs: Affair[];
+}
 
 export default (props: P) => {
   const params = useParams();
@@ -18,7 +21,11 @@ export default (props: P) => {
 
   return (
     <>
-      <Link to="">先添加一些想做的事情吧！</Link>
+      <div>
+        {props.affairs.map(affair => {
+          return <AffairItem affair={affair}></AffairItem>;
+        })}
+      </div>
     </>
   );
 };

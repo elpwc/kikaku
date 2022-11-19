@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router';
-import { Link } from 'react-router-dom';
+import AffairList from '../../components/AffairList';
 import './index.css';
 
 interface P {}
@@ -16,9 +16,18 @@ export default (props: P) => {
     // document.title = '';
   }, []);
 
-  return (
-    <>
-      <Link to="">先添加一些想做的事情吧！</Link>
-    </>
-  );
+  return <>
+    <div>
+      <div>
+        <AffairList affairs={[]}></AffairList>
+      </div>
+      <div>
+        <div>
+          <form>
+            
+          </form>
+        </div>
+      </div>
+    </div>
+  </>;
 };

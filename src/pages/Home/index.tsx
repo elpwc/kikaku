@@ -18,7 +18,11 @@ export default (props: P) => {
 
   return (
     <>
-      <Link to="">先添加一些想做的事情吧！</Link>
+      <div className="w-full h-full flex justify-center">
+        <Link to="add" className="">
+          先添加一些想做的事情吧！
+        </Link>
+      </div>
     </>
   );
 };

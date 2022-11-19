@@ -1,11 +1,13 @@
 import { useEffect } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router';
 import { Affair } from '../../utils/Affair';
+import { AffairListState } from '../../utils/affairListState';
 import AffairItem from '../AffairItem';
 import './index.css';
 
 interface P {
-  affairs: Affair[];
+  children: Affair[];
+  state: AffairListState;
 }
 
 export default (props: P) => {
@@ -21,9 +23,43 @@ export default (props: P) => {
 
   return (
     <>
-      <div>
-        {props.affairs.map(affair => {
-          return <AffairItem affair={affair}></AffairItem>;
+      <div
+        className={
+          '' +
+          (() => {
+            switch (props.state) {
+              case AffairListState.Important:
+                return '';
+              case AffairListState.Planning:
+                return '';
+              case AffairListState.OutsidePlan:
+                return '';
+              case AffairListState.Default:
+                return '';
+              default:
+                return '';
+            }
+          })()
+        }
+      >
+        <div>
+          {(() => {
+            switch (props.state) {
+              case AffairListState.Important:
+                return <p className="AffairList_title_p text-red-800">重要</p>;
+              case AffairListState.Planning:
+                return <p className="AffairList_title_p text-black">计划中</p>;
+              case AffairListState.OutsidePlan:
+                return <p className="AffairList_title_p text-gray-600">计划外</p>;
+              case AffairListState.Default:
+                return <p className="AffairList_title_p text-gray-600">一般规划</p>;
+              default:
+                return '';
+            }
+          })()}
+        </div>
+        {props.children.map(affair => {
+          return <AffairItem state={props.state}>{affair}</AffairItem>;
         })}
       </div>
     </>

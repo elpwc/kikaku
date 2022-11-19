@@ -48,7 +48,7 @@ export const AddForm = () => {
               <input
                 className="w-10 border-b border-b-gray-500"
                 onChange={e => {
-                  times = Number(e.target.value)
+                  times = Number(e.target.value);
                 }}
               />
               次
@@ -79,7 +79,10 @@ export const AddForm = () => {
         <Form.Field name="continuePeriod_min">
           <label className="block text-sm font-medium text-gray-700">
             持续时间
-            <input type="text" className="mt-1 p-2 block w-full rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" />
+            <div className="flex align-middle">
+              <input type="text" className="mt-1 p-2 block w-full rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" />
+              <span className="py-2">h</span>
+            </div>
           </label>
         </Form.Field>
         <Form.Field name="content">

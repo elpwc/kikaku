@@ -18,7 +18,7 @@ export default (props: P) => {
 
   return (
     <>
-      <div className="bg-cyan-50">
+      <div className="bg-cyan-50 h-screen">
         <header>
           <nav
             style={{
@@ -33,9 +33,10 @@ export default (props: P) => {
             <MenuItem to="">周</MenuItem>
             <MenuItem to="">日</MenuItem>
             <MenuItem to="add">添加</MenuItem>
+            <MenuItem to="">一览</MenuItem>
           </nav>
         </header>
-        <main>
+        <main className='w-full h-full'>
           <Outlet />
         </main>
       </div>

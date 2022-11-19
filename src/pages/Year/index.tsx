@@ -16,6 +16,8 @@ export default (props: P) => {
   }, []);
 
   return <>
-    404
+  <div>
+    
+  </div>
   </>;
 };

@@ -28,7 +28,7 @@ export default (props: P) => {
             <MenuItem to="/">
               <p style={{ margin: 0 }}>kikaku</p>
             </MenuItem>
-            <MenuItem to="">年</MenuItem>
+            <MenuItem to="year">年</MenuItem>
             <MenuItem to="">月</MenuItem>
             <MenuItem to="">周</MenuItem>
             <MenuItem to="">日</MenuItem>

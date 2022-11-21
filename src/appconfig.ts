@@ -6,5 +6,5 @@ export default {
   /** server root folder */
   root: '',
   /** API Base URL */
-  apiBaseURL: inDebug ? 'http://localhost:3005' : '',
+  apiBaseURL: inDebug ? 'http://localhost:3006' : '',
 };

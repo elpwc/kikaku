@@ -14,6 +14,7 @@ function App() {
         <Route path="" element={<Main />}>
           <Route index element={<Home />}></Route>
           <Route path="add" element={<Add />}></Route>
+          <Route path="add/:id" element={<Add />}></Route>
           <Route path="year" element={<Year />}></Route>
           <Route path="404" element={<ErrorPage />}></Route>
           <Route path="*" element={<ErrorPage />}></Route>

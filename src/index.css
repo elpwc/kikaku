@@ -12,3 +12,20 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
+
+@layer components {
+  /* Button */
+  .btn-blue {
+    @apply px-10 py-2 text-white font-normal bg-blue-500  rounded transition-all;
+    @apply hover:bg-blue-400 ;
+    @apply active:bg-blue-600  active:transition-none;
+  }
+
+  .btn-blue-ring {
+    @apply  ring ring-blue-400 ;
+    @apply hover:ring-blue-300;
+    @apply  active:ring-blue-400;
+  }
+
+  /* Inputbox */
+}

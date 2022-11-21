@@ -1,7 +1,9 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router';
 import AffairList from '../../components/AffairList';
 import AffairListContainer from '../../components/AffairListContainer';
+import { findAllAffair, findOneAffair } from '../../services/api/Affair';
+import { Affair } from '../../utils/Affair';
 import { AddForm } from './AddForm';
 import './index.css';
 
@@ -12,46 +14,56 @@ export default (props: P) => {
   const navigate = useNavigate();
   const mylocation = useLocation();
 
-  // let currentId: string = params.id as string;
+  let currentId: string = params.id as string;
+
+  const [affairs, setaffairs] = useState([]);
+  const [isModify, setisModify] = useState(false);
+  const [affair, setaffair]: [Affair | undefined | any, any] = useState();
 
   useEffect(() => {
     // document.title = '';
+    findAllAffair().then(e => {
+      console.log(e);
+      setaffairs(e.data.affairs);
+    });
   }, []);
+
+  useEffect(() => {
+    console.log(currentId);
+    if (currentId) {
+      setisModify(true);
+      findOneAffair({ id: currentId })
+        .then(e => {
+          console.log(e);
+          if (e.code === 200) {
+            setaffair(e.data);
+          }
+        })
+        .catch(e => {
+          console.log(e);
+        });
+    } else {
+      setisModify(false);
+      setaffair(undefined);
+    }
+  }, [currentId]);
 
   return (
     <>
       <div className="md:flex sm:block">
         <div className="w-1/5">
-          <AffairListContainer>
-            {[
-              {
-                id: 1,
-                name: 'test',
-                type: 'ABC',
-                content: '123123',
-                deadline: new Date(),
-                continuePeriod_min: 60,
-                times: 1,
-                isImportant: false,
-                doAlarm: false,
-              },
-              {
-                id: 2,
-                name: 'test2',
-                type: 'ABC',
-                content: '123123',
-                deadline: new Date(),
-                continuePeriod_min: 60,
-                times: 1,
-                isImportant: false,
-                doAlarm: false,
-              },
-            ]}
-          </AffairListContainer>
+          <AffairListContainer
+            important={affairs.filter((e: Affair) => {
+              return e.isImportant === true;
+            })}
+            default={affairs.filter((e: Affair) => {
+              return e.isImportant === false;
+            })}
+          />
         </div>
         <div className="w-4/5">
           <div className="m-10 py-10 px-40 bg-white border  border-blue-300 rounded-lg shadow-lg">
-            <AddForm />
+            <AddForm affair={affair} isModify={isModify} />
           </div>
         </div>
       </div>

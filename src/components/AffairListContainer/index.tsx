@@ -6,7 +6,10 @@ import AffairList from '../AffairList';
 import './index.css';
 
 interface P {
-  children: Affair[];
+  important?: Affair[];
+  planning?: Affair[];
+  outsideplan?: Affair[];
+  default?: Affair[];
 }
 
 export default (props: P) => {
@@ -23,10 +26,10 @@ export default (props: P) => {
   return (
     <>
       <div className="bg-white">
-        <AffairList state={AffairListState.Important}>{props.children}</AffairList>
-        <AffairList state={AffairListState.Planning}>{props.children}</AffairList>
-        <AffairList state={AffairListState.OutsidePlan}>{props.children}</AffairList>
-        <AffairList state={AffairListState.Default}>{props.children}</AffairList>
+        {props.important && <AffairList state={AffairListState.Important}>{props.important}</AffairList>}
+        {props.planning && <AffairList state={AffairListState.Planning}>{props.planning}</AffairList>}
+        {props.outsideplan && <AffairList state={AffairListState.OutsidePlan}>{props.outsideplan}</AffairList>}
+        {props.default && <AffairList state={AffairListState.Default}>{props.default}</AffairList>}
       </div>
     </>
   );

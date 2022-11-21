@@ -17,3 +17,8 @@ export interface Affair {
   /** 提醒 */
   doAlarm: boolean;
 }
+
+export interface AffairGroup {
+  affairs: Affair[];
+  name: string;
+}

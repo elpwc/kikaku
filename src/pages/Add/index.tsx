@@ -20,12 +20,16 @@ export default (props: P) => {
   const [isModify, setisModify] = useState(false);
   const [affair, setaffair]: [Affair | undefined | any, any] = useState();
 
-  useEffect(() => {
-    // document.title = '';
+  const updateAffairs = () => {
     findAllAffair().then(e => {
       console.log(e);
       setaffairs(e.data.affairs);
     });
+  };
+
+  useEffect(() => {
+    // document.title = '';
+    updateAffairs();
   }, []);
 
   useEffect(() => {
@@ -63,7 +67,18 @@ export default (props: P) => {
         </div>
         <div className="w-4/5">
           <div className="m-10 py-10 px-40 bg-white border  border-blue-300 rounded-lg shadow-lg">
-            <AddForm affair={affair} isModify={isModify} />
+            <AddForm
+              affair={affair}
+              isModify={isModify}
+              onSubmit={() => {
+                updateAffairs();
+                if (currentId) {
+                  navigate('/add');
+                  setaffair();
+                  setisModify(false);
+                }
+              }}
+            />
           </div>
         </div>
       </div>

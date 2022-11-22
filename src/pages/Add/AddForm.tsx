@@ -1,198 +1,244 @@
-import { useFormik } from 'formik';
+import { Formik, Form, Field } from 'formik';
 import { useState, useEffect } from 'react';
-import { Form, useFormStore } from 'react-hero-form';
-import { createAffair } from '../../services/api/Affair';
+import { useNavigate } from 'react-router';
+import { createAffair, removeAffair, updateAffair } from '../../services/api/Affair';
 import { Affair } from '../../utils/Affair';
 import { TypePicker } from './TypePicker';
+import { Button, Modal } from 'flowbite-react';
 
-let times = -1;
-export const AddForm = (props: { isModify?: boolean; affair?: Affair | undefined }) => {
-  const [fresh, useFresh] = useState(true);
-  const [isModify, setisModify] = useState(false);
-
-
-  console.log(props.affair);
-  const store = useFormStore(
-    props.affair !== undefined
-      ? {
-          name: props.affair!.name,
-          typeId: -1,
-          content: props.affair!.content,
-          deadline: JSON.stringify(props.affair!.deadline),
-          continuePeriod_min: props.affair!.continuePeriod_min,
-          times: props.affair!.times,
-          isImportant: props.affair!.isImportant,
-          doAlarm: props.affair!.doAlarm,
-        }
-      : {
-          name: '123',
-          typeId: -1,
-          content: '',
-          deadline: '',
-          continuePeriod_min: 2,
-          times: -1,
-          isImportant: false,
-          doAlarm: false,
-        }
-  );
-
-  const forceUpdate = () => {
-    useFresh(false);
-    setTimeout(() => {
-      useFresh(true);
-    }, 0);
+let times = '-1';
+export const AddForm = (props: { isModify?: boolean; affair?: Affair | undefined; onSubmit: () => void }) => {
+  const defaultValues = {
+    name: '123',
+    content: '',
+    deadline: '',
+    continuePeriod_min: 2,
+    times: '-1',
+    isImportant: false,
+    doAlarm: false,
   };
 
-  const clear = () => {
-    store.reset();
-    forceUpdate();
-  };
+  const [selectedTypeId, setselectedTypeId] = useState(-1);
+  //const [times, settimes] = useState('2');
+  const [deleteModalVis, setdeleteModalVis] = useState(false);
+  const [initialValues, setinitialValues]: [Affair | undefined | any, any] = useState(defaultValues);
 
-  const onSubmit = (e: any) => {
-    e.preventDefault();
+  const navigate = useNavigate();
 
-    const values = store.get();
-    if (values.times) {
-      values.times = Number(values.times);
-    }
-    console.log(values);
-    createAffair({
-      name: values.name,
-      typeId: values.typeId,
-      content: values.content ?? '',
-      deadline: values.deadline ?? 0,
-      continuePeriod_min: values.continuePeriod_min ?? 2,
-      times: values.times ?? -1,
-      isImportant: values.isImportant ?? false,
-      doAlarm: values.doAlarm ?? false,
-    })
-      .then((e: any) => {
-        console.log(e);
-        clear();
-      })
-      .catch((e: any) => {
-        console.log(e);
+  useEffect(() => {
+    console.log(props.affair);
+    if (props.affair) {
+      console.log(props.affair);
+      if (props.affair.type?.id) {
+        setselectedTypeId(props.affair.type.id);
+      }
+      times = props.affair.times.toString();
+      //settimes(props.affair.times.toString());
+      setinitialValues({
+        name: props.affair!.name,
+        content: props.affair!.content,
+        deadline: props.affair!.deadline.toString().substring(0, props.affair!.deadline.toString().length - 1),
+        continuePeriod_min: props.affair!.continuePeriod_min,
+        times: props.affair!.times.toString(),
+        isImportant: props.affair!.isImportant,
+        doAlarm: props.affair!.doAlarm,
       });
-  };
+    } else {
+      setinitialValues(defaultValues);
+      setselectedTypeId(-1);
+    }
+  }, [props.affair]);
 
-  // https://github.com/varHarrie/react-hero-form
+  console.log(props.affair, initialValues);
+
   return (
-    <div>
-      {fresh && (
-        <Form store={store} className="block space-y-4">
-          <Form.Field name="name">
-            <label className="block text-sm font-medium text-gray-700" defaultValue={store.get('name')}>
-              名字
-              <input
-                name="name"
-                type="text"
-                className="mt-1 p-2 block w-full rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-              />
-            </label>
-          </Form.Field>
-          <Form.Field name="type">
-            <label className="block text-sm font-medium text-gray-700">
-              类别
-              <TypePicker
-                onChange={e => {
-                  store.set('typeId', e);
-                }}
-                value={store.get('typeId')}
-                defaultValue={store.get('typeId')}
-              />
-              {/*
-            <input list="type" type="text" className="mt-1 p-2 block w-full rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" />
-            <datalist id="type">
-              {types.map((type: any) => {
-                return <option value={type.id}>{type.name}</option>;
-              })}
-            </datalist>
-            */}
-              {/*
-            <select className="mt-1 block w-full rounded-md border border-gray-300 bg-white py-2 px-3 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm">
-              {types.map((type: any) => {
-                return <option value={type.id}>{type.name}</option>;
-              })}
-              <option>+添加</option>
-            </select>
-            */}
-            </label>
-          </Form.Field>
-          <Form.Field name="times">
-            <div className="flex space-x-5">
-              <label className="ml-3 flex align-middle text-base font-medium text-gray-700">
-                <input name="times" value={1} defaultChecked={store.get('times') === 1} type="radio" className="h-6 w-6 mr-1 border-gray-300 text-indigo-600 focus:ring-indigo-500" />
-                一次
-              </label>
-              <label className="ml-3 flex align-middle text-base font-medium text-gray-700">
-                <input name="times" value={-1} defaultChecked={store.get('times') === -1} type="radio" className="h-6 w-6 mr-1 border-gray-300 text-indigo-600 focus:ring-indigo-500" />
-                多次
-              </label>
-              <label className="ml-3 flex align-middle text-base font-medium text-gray-700">
-                <input name="times" value={times} defaultChecked={store.get('times') > 1} type="radio" className="h-6 w-6 mr-1 border-gray-300 text-indigo-600 focus:ring-indigo-500" />
-                <input
-                  className="w-10 border-b border-b-gray-500"
-                  onChange={e => {
-                    times = Number(e.target.value);
-                  }}
-                />
-                次
-              </label>
-            </div>
-          </Form.Field>
+    <Formik
+      /* 加了才会重复更新 */
+      enableReinitialize
+      initialValues={initialValues}
+      onSubmit={async (values, { resetForm }) => {
+        console.log(values);
+        if (values.times) {
+          values.times = Number(values.times);
+        }
+        console.log(values);
+
+        if (props.isModify) {
+          // 修改
+
+          updateAffair(
+            { id: props.affair?.id.toString() ?? '-1' },
+            {
+              name: values.name,
+              typeId: selectedTypeId,
+              content: values.content ?? '',
+              deadline: values.deadline ?? 0,
+              continuePeriod_min: values.continuePeriod_min ?? 2,
+              times: values.times ? Number(values.times) : -1,
+              isImportant: values.isImportant ?? false,
+              doAlarm: values.doAlarm ?? false,
+            }
+          )
+            .then((e: any) => {
+              console.log(e);
+              props.onSubmit();
+              resetForm();
+            })
+            .catch((e: any) => {
+              console.log(e);
+            });
+        } else {
+          // 添加
+          createAffair({
+            name: values.name,
+            typeId: selectedTypeId,
+            content: values.content ?? '',
+            deadline: values.deadline ?? null,
+            continuePeriod_min: values.continuePeriod_min ?? 2,
+            times: values.times ? Number(values.times) : -1,
+            isImportant: values.isImportant ?? false,
+            doAlarm: values.doAlarm ?? false,
+          })
+            .then((e: any) => {
+              console.log(e);
+              props.onSubmit();
+              resetForm();
+            })
+            .catch((e: any) => {
+              console.log(e);
+            });
+        }
+      }}
+    >
+      {({ values, resetForm }) => (
+        <Form className="block space-y-4">
+          <label className="block text-sm font-medium text-gray-700">
+            名字
+            <Field id="name" name="name" className="mt-1 p-2 block w-full rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" />
+          </label>
+
+          <label className="block text-sm font-medium text-gray-700">
+            类别
+            <TypePicker
+              onChange={e => {
+                setselectedTypeId(e);
+              }}
+              value={selectedTypeId}
+            />
+          </label>
+
           <div className="flex space-x-5">
-            <Form.Field name="isImportant">
-              <label className="font-medium text-gray-700 flex align-middle">
-                <input type="checkbox" defaultChecked={store.get('isImportant')} className="h-6 w-6 mr-1 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" />
-                重要
-              </label>
-            </Form.Field>
-            <Form.Field name="doAlarm">
-              <label className="font-medium text-gray-700 flex align-middle">
-                <input type="checkbox" defaultChecked={store.get('doAlarm')} className="h-6 w-6 mr-1 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" />
-                提醒
-              </label>
-            </Form.Field>
+            <label className="ml-3 flex align-middle text-base font-medium text-gray-700">
+              <Field type="radio" name="times" value="1" className="h-6 w-6 mr-1 border-gray-300 text-indigo-600 focus:ring-indigo-500" />
+              一次
+            </label>
+            <label className="ml-3 flex align-middle text-base font-medium text-gray-700">
+              <Field type="radio" name="times" value="-1" className="h-6 w-6 mr-1 border-gray-300 text-indigo-600 focus:ring-indigo-500" />
+              多次
+            </label>
+            <label className="ml-3 flex align-middle text-base font-medium text-gray-700">
+              <Field type="radio" name="times" value={Number(times) < 2 ? '2' : times} className="h-6 w-6 mr-1 border-gray-300 text-indigo-600 focus:ring-indigo-500" />
+              <input
+                className="w-10 border-b border-b-gray-500"
+                onChange={e => {
+                  //settimes(e.target.value);
+                  times = e.target.value;
+                }}
+                value={Number(times) < 2 ? '2' : times}
+                defaultValue={Number(times) < 2 ? '2' : times}
+              />
+              次
+            </label>
           </div>
 
-          <Form.Field name="deadline">
-            <label className="block text-sm font-medium text-gray-700">
-              Deadline
-              <input
-                type="datetime-local"
-                defaultValue={store.get('deadline')}
-                className="mt-1 p-2 block w-full rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-              />
+          <div className="flex space-x-5">
+            <label className="font-medium text-gray-700 flex align-middle">
+              <Field type="checkbox" name="isImportant" className="h-6 w-6 mr-1 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" />
+              重要
             </label>
-          </Form.Field>
-          <Form.Field name="continuePeriod_min">
-            <label className="block text-sm font-medium text-gray-700">
-              持续时间
-              <div className="flex align-middle">
-                <input
-                  type="text"
-                  defaultValue={store.get('continuePeriod_min')}
-                  className="mt-1 p-2 block w-full rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                />
-                <span className="py-2">h</span>
-              </div>
+            <label className="font-medium text-gray-700 flex align-middle">
+              <Field type="checkbox" name="doAlarm" className="h-6 w-6 mr-1 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" />
+              提醒
             </label>
-          </Form.Field>
-          <Form.Field name="content">
-            <label className="block text-sm font-medium text-gray-700">
-              详细
-              <textarea defaultValue={store.get('content')} className="mt-1  w-full rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"></textarea>
-            </label>
-          </Form.Field>
-          <Form.Field>
-            <div className="flex justify-center">
-              <button onClick={onSubmit} className="btn-blue btn-blue-ring">
-                添加
-              </button>
-            </div>
-          </Form.Field>
+          </div>
+
+          <label className="block text-sm font-medium text-gray-700">
+            Deadline
+            <Field name="deadline" type="datetime-local" className="mt-1 p-2 block w-full rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" />
+          </label>
+
+          <label className="block text-sm font-medium text-gray-700">
+            持续时间
+            <Field name="continuePeriod_min" className="mt-1 p-2 block w-full rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" />
+          </label>
+          <label className="block text-sm font-medium text-gray-700">
+            详细
+            <Field name="content" as="textarea" className="mt-1  w-full rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" />
+          </label>
+
+          <div className="flex justify-around">
+            <button type="submit" className="btn-blue btn-blue-ring">
+              {props.isModify ? '修改' : '添加'}
+            </button>
+            {props.isModify && (
+              <>
+                <button
+                  onClick={e => {
+                    e.preventDefault();
+
+                    setdeleteModalVis(true);
+                  }}
+                  className="btn-blue btn-blue-ring"
+                >
+                  删除
+                </button>
+
+                <Modal show={deleteModalVis} size="md" popup={true} onClose={() => {}}>
+                  <Modal.Header />
+                  <Modal.Body>
+                    <div className="text-center">
+                      <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">确定删除{props.affair?.name}吗？</h3>
+                      <div className="flex justify-center gap-4">
+                        <Button
+                          color="failure"
+                          onClick={() => {
+                            removeAffair({ id: props.affair?.id.toString() ?? '-1' }).then(e => {
+                              resetForm();
+                              navigate('/add');
+                              setdeleteModalVis(false);
+                            });
+                          }}
+                        >
+                          确定
+                        </Button>
+                        <Button
+                          color="gray"
+                          onClick={() => {
+                            setdeleteModalVis(false);
+                          }}
+                        >
+                          取消
+                        </Button>
+                      </div>
+                    </div>
+                  </Modal.Body>
+                </Modal>
+
+                <button
+                  onClick={e => {
+                    e.preventDefault();
+                    resetForm();
+                    navigate('/add');
+                  }}
+                  className="btn-blue btn-blue-ring"
+                >
+                  返回
+                </button>
+              </>
+            )}
+          </div>
         </Form>
       )}
-    </div>
+    </Formik>
   );
 };

@@ -78,6 +78,7 @@ export const TypePicker = (props: Props) => {
                 console.log(e);
                 settypes(e.data.affairTypes);
                 setselected(res.id);
+                props.onChange?.(res.id);
               });
             });
           }}

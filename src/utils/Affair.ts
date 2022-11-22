@@ -1,7 +1,10 @@
+import { AffairType } from './AffairType';
+
 export interface Affair {
   id: number;
   name: string;
-  type: string;
+
+  type: AffairType;
   /** 说明 */
   content: string;
 

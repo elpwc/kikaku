@@ -19,6 +19,8 @@ export interface Affair {
   isImportant: boolean;
   /** 提醒 */
   doAlarm: boolean;
+  createtime?: Date;
+  updatetime?: Date;
 }
 
 export interface AffairGroup {

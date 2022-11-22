@@ -6,7 +6,7 @@ import AffairItem from '../AffairItem';
 import './index.css';
 
 interface P {
-  children: Affair[];
+  children: Affair[] | string[];
   state: AffairListState;
 }
 

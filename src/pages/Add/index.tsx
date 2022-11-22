@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router';
-import AffairList from '../../components/AffairList';
 import AffairListContainer from '../../components/AffairListContainer';
 import { findAllAffair, findOneAffair } from '../../services/api/Affair';
 import { Affair } from '../../utils/Affair';
@@ -21,7 +20,7 @@ export default (props: P) => {
   const [affair, setaffair]: [Affair | undefined | any, any] = useState();
 
   const updateAffairs = () => {
-    findAllAffair().then(e => {
+    findAllAffair().then((e: any) => {
       console.log(e);
       setaffairs(e.data.affairs);
     });
@@ -37,13 +36,13 @@ export default (props: P) => {
     if (currentId) {
       setisModify(true);
       findOneAffair({ id: currentId })
-        .then(e => {
+        .then((e: any) => {
           console.log(e);
           if (e.code === 200) {
             setaffair(e.data);
           }
         })
-        .catch(e => {
+        .catch((e: any) => {
           console.log(e);
         });
     } else {

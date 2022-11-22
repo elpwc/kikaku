@@ -4,7 +4,7 @@ import { Affair } from '../../utils/Affair';
 import { AffairListState } from '../../utils/affairListState';
 
 interface Props {
-  children: Affair;
+  children: Affair | string;
   state: AffairListState;
 }
 
@@ -59,9 +59,9 @@ export default (props: Props) => {
         })()
       }
     >
-      <div className="w-full">{props.children.name}</div>
+      <div className="w-full">{typeof props.children === 'string' ? props.children : props.children.name}</div>
       <div className="" style={{}}>
-        <Link to={'/add/' + props.children.id}>
+        <Link to={'/add/' + (typeof props.children === 'string' ? '' : (props.children as Affair).id)}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="transition-all"

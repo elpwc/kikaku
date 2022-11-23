@@ -4,10 +4,12 @@ import { Affair } from '../../utils/Affair';
 import { AffairListState } from '../../utils/affairListState';
 import AffairItem from '../AffairItem';
 import './index.css';
+import { Droppable, Draggable } from 'react-beautiful-dnd';
 
 interface P {
-  children: Affair[] | string[];
+  children: Affair[];
   state: AffairListState;
+  draggable: boolean;
 }
 
 export default (props: P) => {
@@ -58,9 +60,39 @@ export default (props: P) => {
             }
           })()}
         </div>
-        {props.children.map(affair => {
-          return <AffairItem state={props.state}>{affair}</AffairItem>;
-        })}
+        {props.draggable ? (
+          <Droppable droppableId={'list_' + props.state.toString()}>
+            {(provided, snapshot) => (
+              <div {...provided.droppableProps} ref={provided.innerRef} id={'list_' + props.state.toString()}>
+                {props.children.map((affair, i) => {
+                  return (
+                    <Draggable key={affair.id} draggableId={'list_' + props.state.toString() + '_' + affair.id.toString()} index={i}>
+                      {(provided, snapshot) => (
+                        <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} id={'list_' + props.state.toString() + '_' + affair.id.toString()}>
+                          <AffairItem state={props.state} draggable={true}>
+                            {affair}
+                          </AffairItem>
+                        </div>
+                      )}
+                    </Draggable>
+                  );
+                })}
+              </div>
+            )}
+          </Droppable>
+        ) : (
+          <div id={'list_' + props.state.toString()}>
+            {props.children.map((affair, i) => {
+              return (
+                <div id={'list_' + props.state.toString() + '_' + affair.id.toString()}>
+                  <AffairItem state={props.state} draggable={false}>
+                    {affair}
+                  </AffairItem>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
     </>
   );

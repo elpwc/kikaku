@@ -37,7 +37,7 @@ export const AddForm = (props: { isModify?: boolean; affair?: Affair | undefined
       setinitialValues({
         name: props.affair!.name,
         content: props.affair!.content,
-        deadline: props.affair!.deadline.toString().substring(0, props.affair!.deadline.toString().length - 1),
+        deadline: props.affair!.deadline === null ? '' : props.affair!.deadline.toString().substring(0, props.affair!.deadline.toString().length - 1),
         continuePeriod_min: props.affair!.continuePeriod_min,
         times: props.affair!.times.toString(),
         isImportant: props.affair!.isImportant,

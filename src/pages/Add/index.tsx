@@ -54,7 +54,7 @@ export default (props: P) => {
   return (
     <>
       <div className="md:flex sm:block">
-        <div className="w-1/5">
+        <div className="w-1/8">
           <AffairListContainer
             important={affairs.filter((e: Affair) => {
               return e.isImportant === true;
@@ -62,10 +62,11 @@ export default (props: P) => {
             default={affairs.filter((e: Affair) => {
               return e.isImportant === false;
             })}
+            draggable={false}
           />
         </div>
         <div className="w-4/5">
-          <div className="m-10 py-10 px-40 bg-white border  border-blue-300 rounded-lg shadow-lg">
+          <div className="mx-10 py-10 px-40 bg-white border  border-blue-300 rounded-lg shadow-lg">
             <AddForm
               affair={affair}
               isModify={isModify}

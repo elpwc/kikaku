@@ -1,7 +1,8 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router';
 import { Affair } from '../../utils/Affair';
 import { AffairListState } from '../../utils/affairListState';
+import AffairItem from '../AffairItem';
 import AffairList from '../AffairList';
 import './index.css';
 
@@ -10,6 +11,7 @@ interface P {
   planning?: Affair[];
   outsideplan?: Affair[];
   default?: Affair[];
+  draggable: boolean;
 }
 
 export default (props: P) => {
@@ -26,10 +28,26 @@ export default (props: P) => {
   return (
     <>
       <div className="bg-white">
-        {props.important && <AffairList state={AffairListState.Important}>{props.important}</AffairList>}
-        {props.planning && <AffairList state={AffairListState.Planning}>{props.planning}</AffairList>}
-        {props.outsideplan && <AffairList state={AffairListState.OutsidePlan}>{props.outsideplan}</AffairList>}
-        {props.default && <AffairList state={AffairListState.Default}>{props.default}</AffairList>}
+        {props.important && (
+          <AffairList state={AffairListState.Important} draggable={props.draggable}>
+            {props.important}
+          </AffairList>
+        )}
+        {props.planning && (
+          <AffairList state={AffairListState.Planning} draggable={props.draggable}>
+            {props.planning}
+          </AffairList>
+        )}
+        {props.outsideplan && (
+          <AffairList state={AffairListState.OutsidePlan} draggable={props.draggable}>
+            {props.outsideplan}
+          </AffairList>
+        )}
+        {props.default && (
+          <AffairList state={AffairListState.Default} draggable={props.draggable}>
+            {props.default}
+          </AffairList>
+        )}
       </div>
     </>
   );

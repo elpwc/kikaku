@@ -7,10 +7,8 @@ interface Props {
 
 export const MenuItem = (props: Props) => {
   return (
-    <div className='MainMenuItem'>
-      <Link to={props.to} style={{ color: '#000', textDecorationLine: 'none' }}>
-        {props.children}
-      </Link>
-    </div>
+    <Link to={props.to} style={{ color: '#000', textDecorationLine: 'none' }} className="px-2">
+      {props.children}
+    </Link>
   );
 };

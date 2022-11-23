@@ -2,15 +2,25 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Affair } from '../../utils/Affair';
 import { AffairListState } from '../../utils/affairListState';
+import { YearRecord } from '../../utils/Record';
+import './index.css';
 
 interface Props {
-  children: Affair | string;
+  children: Affair;
   state: AffairListState;
+  className?: string;
+  style?: React.CSSProperties;
+  editable?: boolean;
+  draggable?: boolean;
+  deletable?: boolean;
+  onDelete?: (affair?: Affair, record?: YearRecord) => void;
+  record?: YearRecord;
 }
 
 export default (props: Props) => {
   const [fontColor, setfontColor] = useState('text-black');
   const [editButtonVisibility, seteditButtonVisibility] = useState(false);
+  const [deleteButtonVisibility, setdeleteButtonVisibility] = useState(false);
 
   useEffect(() => {
     switch (props.state) {
@@ -35,13 +45,22 @@ export default (props: Props) => {
   return (
     <div
       onMouseEnter={() => {
-        seteditButtonVisibility(true);
+        if (props.editable === undefined ? true : props.editable) {
+          seteditButtonVisibility(true);
+        }
+        if (props.deletable === undefined ? true : props.deletable) {
+          setdeleteButtonVisibility(true);
+        }
       }}
       onMouseLeave={() => {
         seteditButtonVisibility(false);
+        setdeleteButtonVisibility(false);
       }}
+      style={props.style}
       className={
-        'AffairItem text-normal text-center px-3 py-2 m-3 rounded transition-all cursor-move flex ' +
+        'AffairItem text-normal text-center px-3 py-2 m-3 rounded transition-all flex ' +
+        (props.draggable ? 'cursor-grab' : '') +
+        props.className +
         fontColor +
         (() => {
           switch (props.state) {
@@ -59,9 +78,9 @@ export default (props: Props) => {
         })()
       }
     >
-      <div className="w-full">{typeof props.children === 'string' ? props.children : props.children.name}</div>
+      <div className="w-full">{props.children?.name}</div>
       <div className="" style={{}}>
-        <Link to={'/add/' + (typeof props.children === 'string' ? '' : (props.children as Affair).id)}>
+        <Link to={'/add/' + props.children?.id}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="transition-all"
@@ -76,6 +95,23 @@ export default (props: Props) => {
             />
           </svg>
         </Link>
+      </div>
+
+      <div style={{ position: 'absolute', right: '-5px', top: '-5px' }}>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="transition-all text-red-500 cursor-pointer"
+          style={{ width: deleteButtonVisibility ? '16px' : '0', height: deleteButtonVisibility ? '16px' : '0' }}
+          fill="currentColor"
+          viewBox="0 0 16 16"
+          onClick={() => {
+            if (props.children) {
+              props.onDelete?.(props.children, props.record);
+            }
+          }}
+        >
+          <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z" />
+        </svg>
       </div>
     </div>
   );

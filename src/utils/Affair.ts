@@ -19,11 +19,7 @@ export interface Affair {
   isImportant: boolean;
   /** 提醒 */
   doAlarm: boolean;
+  deleted: boolean;
   createtime?: Date;
   updatetime?: Date;
-}
-
-export interface AffairGroup {
-  affairs: Affair[];
-  name: string;
 }

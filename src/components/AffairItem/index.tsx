@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Affair } from '../../utils/Affair';
-import { AffairListState } from '../../utils/affairListState';
+import { AffairListState } from '../../utils/enums';
 import { YearRecord } from '../../utils/Record';
 import './index.css';
 
@@ -24,8 +24,11 @@ export default (props: Props) => {
 
   useEffect(() => {
     switch (props.state) {
-      case AffairListState.Important:
+      case AffairListState.PlanningImportant:
         setfontColor('text-red-900');
+        break;
+      case AffairListState.OutsidePlanImportant:
+        setfontColor('text-red-700');
         break;
       case AffairListState.Planning:
         setfontColor('text-white');
@@ -64,8 +67,10 @@ export default (props: Props) => {
         fontColor +
         (() => {
           switch (props.state) {
-            case AffairListState.Important:
+            case AffairListState.PlanningImportant:
               return ' font-bold bg-red-400 ring ring-red-200 hover:bg-red-300';
+            case AffairListState.OutsidePlanImportant:
+              return ' font-bold bg-red-400 ring ring-gray-300 hover:bg-red-300';
             case AffairListState.Planning:
               return ' bg-green-400 ring ring-green-300';
             case AffairListState.OutsidePlan:

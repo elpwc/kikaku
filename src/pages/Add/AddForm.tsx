@@ -98,6 +98,7 @@ export const AddForm = (props: { isModify?: boolean; affair?: Affair | undefined
             times: values.times ? Number(values.times) : -1,
             isImportant: values.isImportant ?? false,
             doAlarm: values.doAlarm ?? false,
+            deleted: false
           })
             .then((e: any) => {
               console.log(e);

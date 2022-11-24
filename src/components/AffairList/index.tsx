@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router';
 import { Affair } from '../../utils/Affair';
-import { AffairListState } from '../../utils/affairListState';
+import { AffairListState } from '../../utils/enums';
 import AffairItem from '../AffairItem';
 import './index.css';
 import { Droppable, Draggable } from 'react-beautiful-dnd';
@@ -30,7 +30,9 @@ export default (props: P) => {
           '' +
           (() => {
             switch (props.state) {
-              case AffairListState.Important:
+              case AffairListState.PlanningImportant:
+                return '';
+              case AffairListState.OutsidePlanImportant:
                 return '';
               case AffairListState.Planning:
                 return '';
@@ -47,8 +49,10 @@ export default (props: P) => {
         <div>
           {(() => {
             switch (props.state) {
-              case AffairListState.Important:
+              case AffairListState.PlanningImportant:
                 return <p className="AffairList_title_p text-red-800">重要</p>;
+              case AffairListState.OutsidePlanImportant:
+                return <p className="AffairList_title_p text-gray-600">重要(计划外)</p>;
               case AffairListState.Planning:
                 return <p className="AffairList_title_p text-black">计划中</p>;
               case AffairListState.OutsidePlan:

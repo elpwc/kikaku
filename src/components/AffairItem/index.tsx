@@ -70,7 +70,7 @@ export default (props: Props) => {
             case AffairListState.PlanningImportant:
               return ' font-bold bg-red-400 ring ring-red-200 hover:bg-red-300';
             case AffairListState.OutsidePlanImportant:
-              return ' font-bold bg-red-400 ring ring-gray-300 hover:bg-red-300';
+              return ' font-bold bg-gray-400 ring-gray-300 hover:bg-red-300';
             case AffairListState.Planning:
               return ' bg-green-400 ring ring-green-300';
             case AffairListState.OutsidePlan:

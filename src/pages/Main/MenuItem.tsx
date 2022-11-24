@@ -7,7 +7,7 @@ interface Props {
 
 export const MenuItem = (props: Props) => {
   return (
-    <Link to={props.to} style={{ color: '#000', textDecorationLine: 'none' }} className="px-2">
+    <Link to={props.to} style={{ color: '#000', textDecorationLine: 'none' }} className="px-5 py-2 transition-all hover:bg-gray-200 active:bg-gray-300">
       {props.children}
     </Link>
   );

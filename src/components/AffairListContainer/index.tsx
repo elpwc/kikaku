@@ -27,7 +27,7 @@ export default (props: P) => {
 
   return (
     <>
-      <div className="bg-white">
+      <div className="border border-gray-300 mt-3 bg-white rounded-lg shadow-lg h-full " style={{}}>
         {(props.important?.length ?? 0) > 0 && (
           <AffairList state={AffairListState.PlanningImportant} draggable={props.draggable}>
             {props.important!}

@@ -53,7 +53,7 @@ export default (props: P) => {
 
   return (
     <>
-      <div className="md:flex sm:block">
+      <div className="md:flex sm:block h-full">
         <div className="w-1/8">
           <AffairListContainer
             important={affairs.filter((e: Affair) => {
@@ -66,7 +66,7 @@ export default (props: P) => {
           />
         </div>
         <div className="w-4/5">
-          <div className="mx-10 py-10 px-40 bg-white border  border-blue-300 rounded-lg shadow-lg">
+          <div className="mx-10 py-10 px-40 bg-white border  border-gray-300 rounded-lg shadow-lg">
             <AddForm
               affair={affair}
               isModify={isModify}

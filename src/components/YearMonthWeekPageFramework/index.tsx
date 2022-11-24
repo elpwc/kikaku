@@ -398,8 +398,8 @@ export default (props: P) => {
 
   return (
     <DragDropContext onDragEnd={onDragEnd} onDragUpdate={onDragUpdate} onDragStart={onDragStart}>
-      <div className="md:flex sm:block">
-        <div className="w-1/5">
+      <div className="md:flex sm:block h-full">
+        <div className="w-1/8">
           <AffairListContainer
             important={affairsInTypes[0]}
             planning={affairsInTypes[1]}

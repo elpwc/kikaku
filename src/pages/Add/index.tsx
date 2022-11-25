@@ -27,7 +27,7 @@ export default (props: P) => {
   };
 
   useEffect(() => {
-    // document.title = '';
+    document.title = 'Kikaku - 添加新计划';
     updateAffairs();
   }, []);
 

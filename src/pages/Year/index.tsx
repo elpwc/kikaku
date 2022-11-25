@@ -14,7 +14,7 @@ export default (props: P) => {
   let currentYear: string = params.year as string;
 
   useEffect(() => {
-    document.title = 'Kikaku - 所有年份的规划';
+    document.title = 'Kikaku - 总体规划';
   }, []);
 
   return <YearMonthWeekPageFramework type={RecordType.year} />;

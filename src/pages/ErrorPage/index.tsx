@@ -12,7 +12,7 @@ export default (props: P) => {
   // let currentId: string = params.id as string;
 
   useEffect(() => {
-    // document.title = '';
+    document.title = 'Kikaku - 404';
   }, []);
 
   return <>

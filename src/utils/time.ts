@@ -38,20 +38,22 @@ export const getWeeks = (y: number, m: number, includeDateInOtherMonths: boolean
   let last = weekDay(y, m, dayCount);
 
   const res: { start: { m: number; d: number }; end: { m: number; d: number } }[] = [];
-  if (includeDateInOtherMonths) {
-    // 包含其他月份的日期
-    if (first === 0) {
-      // 如果1号是星期日
-      res.push({ start: { m, d: 1 }, end: { m, d: 7 } });
+  if (first <= 3) {
+    if (includeDateInOtherMonths) {
+      // 包含其他月份的日期
+      if (first === 0) {
+        // 如果1号是星期日
+        res.push({ start: { m, d: 1 }, end: { m, d: 7 } });
+      } else {
+        // 1号不是星期日
+        const lastMonth = m - 1 === 0 ? 12 : m - 1;
+        const lastMonthDayCount = m - 1 === 0 ? monthsDays(12) : monthsDays(m - 1, isLeapYear(y - 1));
+        res.push({ start: { m: lastMonth, d: lastMonthDayCount - first + 1 }, end: { m, d: 7 - first } });
+      }
     } else {
-      // 1号不是星期日
-      const lastMonth = m - 1 === 0 ? 12 : m - 1;
-      const lastMonthDayCount = m - 1 === 0 ? monthsDays(12) : monthsDays(m - 1, isLeapYear(y - 1));
-      res.push({ start: { m: lastMonth, d: lastMonthDayCount - first + 1 }, end: { m, d: 7 - first } });
+      // 只包含这个月份的日期
+      res.push({ start: { m, d: 1 }, end: { m, d: 7 - first } });
     }
-  } else {
-    // 只包含这个月份的日期
-    res.push({ start: { m, d: 1 }, end: { m, d: 7 - first } });
   }
   let currentStartDay = 7 - first + 1;
 
@@ -83,4 +85,56 @@ export const getWeeks = (y: number, m: number, includeDateInOtherMonths: boolean
   }
 
   return res;
+};
+
+// 日期在哪一周
+export const whichWeek = (y: number, m: number, d: number): { y: number; m: number; w: number } => {
+  const crtMWeeks = getWeeks(y, m, true);
+
+  let res = -1;
+
+  for (let i = 0; i < crtMWeeks.length; i++) {
+    if (m >= crtMWeeks[i].start.m && d >= crtMWeeks[i].start.d && m <= crtMWeeks[i].start.m && d <= crtMWeeks[i].start.d) {
+      res = i;
+      break;
+    }
+  }
+
+  if (res !== -1) {
+    return { y, m, w: res };
+  }
+
+  if (d <= 7) {
+    const crtMWeeks = getWeeks(m === 1 ? y - 1 : y, m === 1 ? 12 : m - 1, true);
+
+    let res = -1;
+
+    for (let i = 0; i < crtMWeeks.length; i++) {
+      if (m >= crtMWeeks[i].start.m && d >= crtMWeeks[i].start.d && m <= crtMWeeks[i].start.m && d <= crtMWeeks[i].start.d) {
+        res = i;
+        break;
+      }
+    }
+
+    if (res !== -1) {
+      return { y: m === 1 ? y - 1 : y, m: m === 1 ? 12 : m, w: res };
+    }
+  } else if (d >= 21) {
+    const crtMWeeks = getWeeks(m === 12 ? y + 1 : y, m === 12 ? 1 : m + 1, true);
+
+    let res = -1;
+
+    for (let i = 0; i < crtMWeeks.length; i++) {
+      if (m >= crtMWeeks[i].start.m && d >= crtMWeeks[i].start.d && m <= crtMWeeks[i].start.m && d <= crtMWeeks[i].start.d) {
+        res = i;
+        break;
+      }
+    }
+
+    if (res !== -1) {
+      return { y: m === 12 ? y + 1 : y, m: m === 12 ? 1 : m + 1, w: res };
+    }
+  }
+
+  return { y, m, w: 0 };
 };

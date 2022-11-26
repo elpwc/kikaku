@@ -17,10 +17,10 @@ function App() {
           <Route index element={<Home />}></Route>
           <Route path="add" element={<Add />}></Route>
           <Route path="add/:id" element={<Add />}></Route>
-          <Route path="year" element={<Year />}></Route>
-          <Route path="year/:year" element={<Month />}></Route>
-          <Route path="year/:year/month/:month" element={<Week />}></Route>
-          <Route path="year/:year/month/:month/week/:week" element={<Month />}></Route>
+          <Route path="plan" element={<Year />}></Route>
+          <Route path="plan/:year" element={<Month />}></Route>
+          <Route path="plan/:year/:month" element={<Week />}></Route>
+          <Route path="schedule/:year/:month/:week" element={<Month />}></Route>
           <Route path="404" element={<ErrorPage />}></Route>
           <Route path="*" element={<ErrorPage />}></Route>
         </Route>

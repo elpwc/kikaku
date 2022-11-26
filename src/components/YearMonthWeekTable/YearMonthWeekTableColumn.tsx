@@ -36,16 +36,16 @@ export const YearMonthWeekTableColumn = (props: Props) => {
           } else {
             switch (props.type) {
               case RecordType.year:
-                navigate('/year/' + props.head);
+                navigate('/plan/' + props.head);
                 break;
               case RecordType.month:
-                navigate('/year/' + props.info?.year + '/month/' + props.head);
+                navigate('/plan/' + props.info?.year + '/' + props.head);
                 break;
               case RecordType.week:
-                navigate('/year/' + props.info?.year + '/month/' + props.info?.month + '/week/' + props.head);
+                navigate('/plan/' + props.info?.year + '/' + props.info?.month + '/' + props.head);
                 break;
               case RecordType.day:
-                navigate('/year/' + props.info?.year + '/month/' + props.info?.month + '/week/' + props.info?.week + '/day/' + props.head);
+                navigate('/schedule/' + props.info?.year + '/' + props.info?.month + '/' + props.info?.week + '/' + props.head);
                 break;
             }
           }

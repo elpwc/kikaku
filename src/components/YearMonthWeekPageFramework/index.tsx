@@ -412,21 +412,21 @@ export default (props: P) => {
         <div className="w-4/5">
           <Breadcrumb aria-label="Default breadcrumb" className="my-3 mx-10">
             <Breadcrumb.Item href="#">
-              <Link to="/year">总体规划</Link>
+              <Link to="/plan">总体规划</Link>
             </Breadcrumb.Item>
             {(props.type === RecordType.month || props.type === RecordType.week || props.type === RecordType.day) && (
               <Breadcrumb.Item href="#">
-                <Link to={'/year/' + props.info?.year}>{props.info?.year}年</Link>
+                <Link to={'/plan/' + props.info?.year}>{props.info?.year}年</Link>
               </Breadcrumb.Item>
             )}
             {(props.type === RecordType.day || props.type === RecordType.week) && (
               <Breadcrumb.Item href="#">
-                <Link to={'/year/' + props.info?.year + '/month/' + props.info?.month}>{props.info?.month}月</Link>
+                <Link to={'/plan/' + props.info?.year + '/' + props.info?.month}>{props.info?.month}月</Link>
               </Breadcrumb.Item>
             )}
             {props.type === RecordType.day && (
               <Breadcrumb.Item href="#">
-                <Link to={'/year/' + props.info?.year + '/month/' + props.info?.month + '/week/' + props.info?.week}>第 {props.info?.week} 周</Link>
+                <Link to={'/schedule/' + props.info?.year + '/' + props.info?.month + '/' + props.info?.week}>第 {props.info?.week} 周</Link>
               </Breadcrumb.Item>
             )}
           </Breadcrumb>

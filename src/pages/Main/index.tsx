@@ -1,6 +1,7 @@
 import { ToggleSwitch } from 'flowbite-react';
 import { useEffect } from 'react';
 import { Outlet, useLocation, useNavigate, useParams } from 'react-router';
+import { whichWeek } from '../../utils/time';
 import './index.css';
 import { MenuItem } from './MenuItem';
 
@@ -13,6 +14,9 @@ export default (props: P) => {
 
   // let currentId: string = params.id as string;
   console.log(mylocation);
+
+  const date = new Date();
+  const currentWeek = whichWeek(date.getFullYear(), date.getMonth() + 1, date.getDate());
 
   useEffect(() => {
     // document.title = '';
@@ -28,10 +32,10 @@ export default (props: P) => {
                 <span className="text-red-600">Ki</span>kaku
               </p>
             </MenuItem>
-            <MenuItem to="/year" checked={mylocation.pathname.split('/')[1] === 'year'}>
+            <MenuItem to="/plan" checked={mylocation.pathname.split('/')[1] === 'plan'}>
               规划
             </MenuItem>
-            <MenuItem to="/schedule" checked={mylocation.pathname.split('/')[1] === '?'}>
+            <MenuItem to={`/schedule/${currentWeek.y}/${currentWeek.m}/${currentWeek.w}`} checked={mylocation.pathname.split('/')[1] === 'schedule'}>
               日程
             </MenuItem>
             <MenuItem to="/add" checked={mylocation.pathname.split('/')[1] === 'add'}>

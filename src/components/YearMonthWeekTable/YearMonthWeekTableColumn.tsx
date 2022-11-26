@@ -42,7 +42,7 @@ export const YearMonthWeekTableColumn = (props: Props) => {
                 navigate('/plan/' + props.info?.year + '/' + props.head);
                 break;
               case RecordType.week:
-                navigate('/plan/' + props.info?.year + '/' + props.info?.month + '/' + props.head);
+                navigate('/schedule/' + props.info?.year + '/' + props.info?.month + '/' + props.head);
                 break;
               case RecordType.day:
                 navigate('/schedule/' + props.info?.year + '/' + props.info?.month + '/' + props.info?.week + '/' + props.head);

@@ -14,6 +14,7 @@ import { Breadcrumb } from 'flowbite-react';
 import { Link } from 'react-router-dom';
 import { createMonthRecord, findAllMonthRecord, updateMonthRecord } from '../../services/api/MonthRecord';
 import { createWeekRecord, findAllWeekRecord, updateWeekRecord } from '../../services/api/WeekRecord';
+import { getWeeksCount } from '../../utils/time';
 
 interface P {
   type: RecordType;
@@ -191,7 +192,7 @@ export default (props: P) => {
     // document.title = '';
     reloadAffairs();
     reloadRecords();
-  }, []);
+  }, [props.info]);
 
   const onDragEnd = (result: DropResult) => {
     // dropped outside the list
@@ -410,26 +411,95 @@ export default (props: P) => {
           />
         </div>
         <div className="w-4/5">
-          <Breadcrumb aria-label="Default breadcrumb" className="my-3 mx-10">
-            <Breadcrumb.Item href="#">
-              <Link to="/plan">总体规划</Link>
-            </Breadcrumb.Item>
-            {(props.type === RecordType.month || props.type === RecordType.week || props.type === RecordType.day) && (
+          <div className="flex justify-between">
+            <Breadcrumb aria-label="Default breadcrumb" className="my-3 mx-10">
               <Breadcrumb.Item href="#">
-                <Link to={'/plan/' + props.info?.year}>{props.info?.year}年</Link>
+                <Link to="/plan">总体规划</Link>
               </Breadcrumb.Item>
+              {(props.type === RecordType.month || props.type === RecordType.week || props.type === RecordType.day) && (
+                <Breadcrumb.Item href="#">
+                  <Link to={'/plan/' + props.info?.year}>{props.info?.year}年</Link>
+                </Breadcrumb.Item>
+              )}
+              {(props.type === RecordType.day || props.type === RecordType.week) && (
+                <Breadcrumb.Item href="#">
+                  <Link to={'/plan/' + props.info?.year + '/' + props.info?.month}>{props.info?.month}月</Link>
+                </Breadcrumb.Item>
+              )}
+              {props.type === RecordType.day && (
+                <Breadcrumb.Item href="#">
+                  <Link to={'/schedule/' + props.info?.year + '/' + props.info?.month + '/' + props.info?.week}>第 {props.info?.week} 周</Link>
+                </Breadcrumb.Item>
+              )}
+            </Breadcrumb>
+            {props.type !== RecordType.year && (
+              <div className="flex space-x-5 items-center pr-20">
+                <button
+                  className="roundButton"
+                  onClick={() => {
+                    navigate(
+                      (() => {
+                        switch (props.type) {
+                          case RecordType.year:
+                            return `/plan`;
+                          case RecordType.month:
+                            return `/plan/${(props.info?.year ?? 2022) - 1}`;
+                          case RecordType.week:
+                            return `/plan/${props.info?.month === 1 ? (props.info?.year ?? 2022) - 1 : props.info?.year ?? 2022}/${props.info?.month === 1 ? 12 : (props.info?.month ?? 2) - 1}`;
+                          case RecordType.day:
+                            return `/plan/${props.info?.month === 1 && props.info.week === 1 ? (props.info?.year ?? 2022) - 1 : props.info?.year ?? 2022}/${
+                              props.info?.week === 1 ? (props.info?.month ?? 2) - 1 : props.info?.month ?? 2
+                            }/${props.info?.week === 1 ? getWeeksCount(props.info.year, props.info?.month ?? 1) : (props.info?.week ?? 2) - 1}`;
+                          default:
+                            return '';
+                        }
+                      })()
+                    );
+                  }}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                    <path
+                      fillRule="evenodd"
+                      d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-4.5-.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5z"
+                    />
+                  </svg>
+                </button>
+                <button
+                  className="roundButton"
+                  onClick={() => {
+                    navigate(
+                      (() => {
+                        switch (props.type) {
+                          case RecordType.year:
+                            return `/plan`;
+                          case RecordType.month:
+                            return `/plan/${(props.info?.year ?? 2022) + 1}`;
+                          case RecordType.week:
+                            return `/plan/${props.info?.month === 12 ? (props.info?.year ?? 2022) + 1 : props.info?.year ?? 2022}/${props.info?.month === 12 ? 1 : (props.info?.month ?? 2) + 1}`;
+                          case RecordType.day:
+                            return `/plan/${
+                              props.info?.month === 12 && props.info.week === getWeeksCount(props.info.year, props.info?.month ?? 1) ? (props.info?.year ?? 2022) + 1 : props.info?.year ?? 2022
+                            }/${props.info?.week === getWeeksCount(props.info?.year ?? 2022, props.info?.month ?? 1) ? (props.info?.month ?? 2) + 1 : props.info?.month ?? 2}/${
+                              props.info?.week === getWeeksCount(props.info?.year ?? 2022, props.info?.month ?? 1) ? 1 : (props.info?.week ?? 2) + 1
+                            }`;
+                          default:
+                            return '';
+                        }
+                      })()
+                    );
+                  }}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                    <path
+                      fillRule="evenodd"
+                      d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z"
+                    />
+                  </svg>
+                </button>
+              </div>
             )}
-            {(props.type === RecordType.day || props.type === RecordType.week) && (
-              <Breadcrumb.Item href="#">
-                <Link to={'/plan/' + props.info?.year + '/' + props.info?.month}>{props.info?.month}月</Link>
-              </Breadcrumb.Item>
-            )}
-            {props.type === RecordType.day && (
-              <Breadcrumb.Item href="#">
-                <Link to={'/schedule/' + props.info?.year + '/' + props.info?.month + '/' + props.info?.week}>第 {props.info?.week} 周</Link>
-              </Breadcrumb.Item>
-            )}
-          </Breadcrumb>
+          </div>
+
           <YearMonthWeekTable
             drag={drag}
             dragHoverId={dragHoverId}

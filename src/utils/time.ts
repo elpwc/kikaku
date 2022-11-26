@@ -6,7 +6,7 @@ export const monthsDays = (month: number, isLeapYear: boolean = false) => [31, i
 export const isLeapYear = (year: number) => (year % 4 == 0 && year % 100 != 0) || year % 400 == 0;
 
 /** 获取星期 0-6 */
-export const weekDay = (y: number, m: number, d: number) => new Date(y, m, d).getDay();
+export const weekDay = (y: number, m: number, d: number) => new Date(y, m - 1, d).getDay();
 
 export const months = (month: number) => ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'][month - 1];
 export const weekdays = (weekday: number) => ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][weekday];

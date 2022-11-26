@@ -136,5 +136,28 @@ export const whichWeek = (y: number, m: number, d: number): { y: number; m: numb
     }
   }
 
-  return { y, m, w: 0 };
+  return { y, m, w: 1 };
+};
+
+/** 第x周第x天是哪一天 */
+export const whichDate = (y: number, m: number, w: number, day: number): { y: number; m: number; d: number } => {
+  const week = getWeeks(y, m, true)[w - 1];
+  let resY = y;
+  let resM = week.start.m;
+  let resD = week.start.d;
+
+  const monthLength = monthsDays(resM, isLeapYear(resY));
+
+  if (resD + day > monthLength) {
+    resD = resD + day - monthLength;
+    resM++;
+    if (resM === 13) {
+      resM = 1;
+      resY++;
+    }
+  } else {
+    resD += day;
+  }
+
+  return { y: resY, m: resM, d: resD };
 };

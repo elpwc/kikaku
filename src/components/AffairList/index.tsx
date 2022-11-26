@@ -88,7 +88,7 @@ export default (props: P) => {
           <div id={'list_' + props.state.toString()}>
             {props.children.map((affair, i) => {
               return (
-                <div id={'list_' + props.state.toString() + '_' + affair.id.toString()}>
+                <div id={'list_' + props.state.toString() + '_' + affair.id.toString()} key={affair.id}>
                   <AffairItem state={props.state} draggable={false}>
                     {affair}
                   </AffairItem>

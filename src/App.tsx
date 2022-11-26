@@ -6,6 +6,7 @@ import ErrorPage from './pages/ErrorPage';
 import Home from './pages/Home';
 import Main from './pages/Main';
 import Month from './pages/Month';
+import Schedule from './pages/Schedule';
 import Week from './pages/Week';
 import Year from './pages/Year';
 
@@ -20,7 +21,7 @@ function App() {
           <Route path="plan" element={<Year />}></Route>
           <Route path="plan/:year" element={<Month />}></Route>
           <Route path="plan/:year/:month" element={<Week />}></Route>
-          <Route path="schedule/:year/:month/:week" element={<Month />}></Route>
+          <Route path="plan/:year/:month/:week" element={<Schedule />}></Route>
           <Route path="404" element={<ErrorPage />}></Route>
           <Route path="*" element={<ErrorPage />}></Route>
         </Route>

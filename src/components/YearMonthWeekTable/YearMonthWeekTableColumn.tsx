@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { Draggable, Droppable } from 'react-beautiful-dnd';
 import { useNavigate } from 'react-router';
 import { removeMonthRecord } from '../../services/api/MonthRecord';
@@ -5,7 +6,7 @@ import { removeWeekRecord } from '../../services/api/WeekRecord';
 import { removeYearRecord } from '../../services/api/YearRecord';
 import { AffairListState, RecordType } from '../../utils/enums';
 import { YearRecord } from '../../utils/Record';
-import { getWeeks, months, weekdays, whichWeek } from '../../utils/time';
+import { getWeeks, months, weekdays, whichDate, whichWeek } from '../../utils/time';
 import AffairItem from '../AffairItem';
 
 interface Props {
@@ -25,6 +26,28 @@ interface Props {
 
 export const YearMonthWeekTableColumn = (props: Props) => {
   const navigate = useNavigate();
+
+  const [thisWeek, setthisWeek] = useState({
+    start: {
+      m: 1,
+      d: 1,
+    },
+    end: {
+      m: 1,
+      d: 1,
+    },
+  });
+  const [thisDate, setthisDate] = useState({ y: 2022, m: 1, d: 1 });
+
+  useEffect(() => {
+    if (props.type === RecordType.week) {
+      console.log(props.info?.year ?? 2022, props.info?.month ?? 1, Number(props.head) - 1, getWeeks(props.info?.year ?? 2022, props.info?.month ?? 1, true));
+      setthisWeek(getWeeks(props.info?.year ?? 2022, props.info?.month ?? 1, true)[Number(props.head) - 1]);
+    }
+    if (props.type === RecordType.day) {
+      setthisDate(whichDate(props.info?.year ?? 2022, props.info?.month ?? 1, props.info?.week ?? 1, Number(props.head)));
+    }
+  }, [props.type, props.info]);
 
   return (
     <div
@@ -112,10 +135,10 @@ export const YearMonthWeekTableColumn = (props: Props) => {
                 navigate('/plan/' + props.info?.year + '/' + props.head);
                 break;
               case RecordType.week:
-                navigate('/schedule/' + props.info?.year + '/' + props.info?.month + '/' + props.head);
+                navigate('/plan/' + props.info?.year + '/' + props.info?.month + '/' + props.head);
                 break;
               case RecordType.day:
-                navigate('/schedule/' + props.info?.year + '/' + props.info?.month + '/' + props.info?.week + '/' + props.head);
+                navigate('/plan/' + props.info?.year + '/' + props.info?.month + '/' + props.info?.week + '/' + props.head);
                 break;
             }
           }
@@ -133,17 +156,20 @@ export const YearMonthWeekTableColumn = (props: Props) => {
               case RecordType.month:
                 return months(Number(props.head));
               case RecordType.week:
-                const weeks = getWeeks(props.info?.year ?? 2022, props.info?.month ?? 1, true);
-                const w = weeks[(Number(props.head) ?? 1) - 1];
-                console.log(weeks, w, (Number(props.head) ?? 1) - 1);
+                console.log(thisWeek.start.m, thisWeek.start.d, thisWeek.end.m, thisWeek.end.d);
                 return (
                   <div className="text-center">
                     <p>{'第' + props.head + '周'}</p>
-                    <p className="text-sm text-gray-400">{`${w.start.m}月${w.start.d}日 ~ ${w.end.m}月${w.end.d}日`}</p>
+                    <p className="text-sm text-gray-400">{`${thisWeek.start.m}月${thisWeek.start.d}日 ~ ${thisWeek.end.m}月${thisWeek.end.d}日`}</p>
                   </div>
                 );
               case RecordType.day:
-                return weekdays(props.info?.week ?? 0);
+                return (
+                  <div className="text-center">
+                    <p>{weekdays(Number(props.head))}</p>
+                    <p className="text-sm text-gray-400">{`${thisDate.m}月${thisDate.d}日`}</p>
+                  </div>
+                );
               default:
                 return '';
             }

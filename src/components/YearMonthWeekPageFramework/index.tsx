@@ -11,10 +11,9 @@ import { RecordType } from '../../utils/enums';
 import { MonthRecord, RecordExtend, WeekRecord, YearRecord } from '../../utils/Record';
 import './index.css';
 import { Breadcrumb } from 'flowbite-react';
-import { Link } from 'react-router-dom';
 import { createMonthRecord, findAllMonthRecord, updateMonthRecord } from '../../services/api/MonthRecord';
 import { createWeekRecord, findAllWeekRecord, updateWeekRecord } from '../../services/api/WeekRecord';
-import { getWeeksCount } from '../../utils/time';
+import { getWeeks, getWeeksCount } from '../../utils/time';
 
 interface P {
   type: RecordType;
@@ -38,6 +37,17 @@ export default (props: P) => {
   const [drag, setdrag] = useState(false);
   const [dragHoverId, setdragHoverId] = useState('');
   const [records, setrecords]: [RecordExtend[], any] = useState([]);
+  /** 只适用于Schedule页 */
+  const [thisWeek, setthisWeek] = useState({
+    start: {
+      m: 1,
+      d: 1,
+    },
+    end: {
+      m: 1,
+      d: 1,
+    },
+  });
 
   // let currentId: string = params.id as string;
 
@@ -193,6 +203,12 @@ export default (props: P) => {
     reloadAffairs();
     reloadRecords();
   }, [props.info]);
+
+  useEffect(() => {
+    if (props.type === RecordType.day) {
+      setthisWeek(getWeeks(props.info?.year ?? 2022, props.info?.month ?? 1, true)[(Number(props.info?.week) ?? 1) - 1]);
+    }
+  }, [props.type, props.info]);
 
   const onDragEnd = (result: DropResult) => {
     // dropped outside the list
@@ -413,22 +429,42 @@ export default (props: P) => {
         <div className="w-4/5">
           <div className="flex justify-between">
             <Breadcrumb aria-label="Default breadcrumb" className="my-3 mx-10">
-              <Breadcrumb.Item href="#">
-                <Link to="/plan">总体规划</Link>
+              <Breadcrumb.Item
+                className="cursor-pointer"
+                onClick={() => {
+                  navigate('/plan/');
+                }}
+              >
+                总体规划
               </Breadcrumb.Item>
               {(props.type === RecordType.month || props.type === RecordType.week || props.type === RecordType.day) && (
-                <Breadcrumb.Item href="#">
-                  <Link to={'/plan/' + props.info?.year}>{props.info?.year}年</Link>
+                <Breadcrumb.Item
+                  className="cursor-pointer"
+                  onClick={() => {
+                    navigate('/plan/' + props.info?.year);
+                  }}
+                >
+                  {props.info?.year}年
                 </Breadcrumb.Item>
               )}
               {(props.type === RecordType.day || props.type === RecordType.week) && (
-                <Breadcrumb.Item href="#">
-                  <Link to={'/plan/' + props.info?.year + '/' + props.info?.month}>{props.info?.month}月</Link>
+                <Breadcrumb.Item
+                  className="cursor-pointer"
+                  onClick={() => {
+                    navigate('/plan/' + props.info?.year + '/' + props.info?.month);
+                  }}
+                >
+                  {props.info?.month}月
                 </Breadcrumb.Item>
               )}
               {props.type === RecordType.day && (
-                <Breadcrumb.Item href="#">
-                  <Link to={'/schedule/' + props.info?.year + '/' + props.info?.month + '/' + props.info?.week}>第 {props.info?.week} 周</Link>
+                <Breadcrumb.Item
+                  className="cursor-pointer"
+                  onClick={() => {
+                    navigate('/plan/' + props.info?.year + '/' + props.info?.month + '/' + props.info?.week);
+                  }}
+                >
+                  第 {props.info?.week} 周 {` (${thisWeek.start.m}月${thisWeek.start.d}日 ~ ${thisWeek.end.m}月${thisWeek.end.d}日)`}
                 </Breadcrumb.Item>
               )}
             </Breadcrumb>
@@ -447,9 +483,19 @@ export default (props: P) => {
                           case RecordType.week:
                             return `/plan/${props.info?.month === 1 ? (props.info?.year ?? 2022) - 1 : props.info?.year ?? 2022}/${props.info?.month === 1 ? 12 : (props.info?.month ?? 2) - 1}`;
                           case RecordType.day:
-                            return `/plan/${props.info?.month === 1 && props.info.week === 1 ? (props.info?.year ?? 2022) - 1 : props.info?.year ?? 2022}/${
-                              props.info?.week === 1 ? (props.info?.month ?? 2) - 1 : props.info?.month ?? 2
-                            }/${props.info?.week === 1 ? getWeeksCount(props.info.year, props.info?.month ?? 1) : (props.info?.week ?? 2) - 1}`;
+                            const y = props.info?.month === 1 && props.info.week === 1 ? (props.info?.year ?? 2022) - 1 : props.info?.year ?? 2022;
+                            const m = props.info?.week === 1 && props.info.month === 1 ? 12 : props.info?.week === 1 ? (props.info?.month ?? 2) - 1 : props.info?.month ?? 2;
+                            let w = props.info?.week ?? 1;
+                            if (w === 1) {
+                              if (props.info?.month === 1) {
+                                w = getWeeksCount((props.info?.year ?? 2022) - 1, 12);
+                              } else {
+                                w = getWeeksCount(props.info?.year ?? 2022, (props.info?.month ?? 1) - 1);
+                              }
+                            } else {
+                              w = (props.info?.week ?? 2) - 1;
+                            }
+                            return `/plan/${y}/${m}/${w}`;
                           default:
                             return '';
                         }
@@ -479,9 +525,13 @@ export default (props: P) => {
                           case RecordType.day:
                             return `/plan/${
                               props.info?.month === 12 && props.info.week === getWeeksCount(props.info.year, props.info?.month ?? 1) ? (props.info?.year ?? 2022) + 1 : props.info?.year ?? 2022
-                            }/${props.info?.week === getWeeksCount(props.info?.year ?? 2022, props.info?.month ?? 1) ? (props.info?.month ?? 2) + 1 : props.info?.month ?? 2}/${
-                              props.info?.week === getWeeksCount(props.info?.year ?? 2022, props.info?.month ?? 1) ? 1 : (props.info?.week ?? 2) + 1
-                            }`;
+                            }/${
+                              props.info?.month === 12 && props.info?.week === getWeeksCount(props.info?.year ?? 2022, props.info?.month ?? 1)
+                                ? 1
+                                : props.info?.week === getWeeksCount(props.info?.year ?? 2022, props.info?.month ?? 1)
+                                ? (props.info?.month ?? 2) + 1
+                                : props.info?.month ?? 2
+                            }/${props.info?.week === getWeeksCount(props.info?.year ?? 2022, props.info?.month ?? 1) ? 1 : (props.info?.week ?? 2) + 1}`;
                           default:
                             return '';
                         }

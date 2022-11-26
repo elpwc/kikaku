@@ -65,20 +65,21 @@ export default (props: P) => {
         setlastYMW(6);
         break;
     }
-  }, []);
+  }, [props.info, props.type]);
 
   useEffect(() => {
     // document.title = '';
     if (props.type === RecordType.year) {
       setlastYMW(getLastYear());
     }
-  }, [props.children]);
+  }, [props.children, props.type]);
 
   return (
     <div className="flex border border-gray-300 mx-10 bg-white rounded-lg shadow-lg overscroll-x-auto" style={{ overflowX: 'scroll' }}>
       {range(firstYMW, lastYMW + 1).map(head => {
         return (
           <YearMonthWeekTableColumn
+            key={head}
             head={head.toString()}
             content={
               props.children

@@ -5,7 +5,7 @@ import { removeWeekRecord } from '../../services/api/WeekRecord';
 import { removeYearRecord } from '../../services/api/YearRecord';
 import { AffairListState, RecordType } from '../../utils/enums';
 import { YearRecord } from '../../utils/Record';
-import { getWeeks, months, weekdays } from '../../utils/time';
+import { getWeeks, months, weekdays, whichWeek } from '../../utils/time';
 import AffairItem from '../AffairItem';
 
 interface Props {
@@ -27,7 +27,77 @@ export const YearMonthWeekTableColumn = (props: Props) => {
   const navigate = useNavigate();
 
   return (
-    <div className={'border-r border-gray-300 transition-all ' + (props.dragHover ? 'shadow-lg' : '')}>
+    <div
+      className={
+        'border-r border-gray-300 transition-all ' +
+        (props.dragHover ? 'shadow-lg' : '') +
+        (() => {
+          const date = new Date();
+          const headT = Number(props.head);
+          switch (props.type) {
+            case RecordType.year:
+              if (headT < date.getFullYear()) {
+                return 'bg-gray-50';
+              } else if (headT === date.getFullYear()) {
+                return 'bg-blue-50';
+              }
+              return '';
+            case RecordType.month:
+              if ((props.info?.year ?? 2022) < date.getFullYear()) {
+                return 'bg-gray-50';
+              } else if ((props.info?.year ?? 2022) === date.getFullYear()) {
+                if (headT < date.getMonth() + 1) {
+                  return 'bg-gray-50';
+                } else if (headT === date.getMonth() + 1) {
+                  return 'bg-blue-50';
+                }
+              }
+
+              return '';
+            case RecordType.week: {
+              const w = whichWeek(date.getFullYear(), date.getMonth() + 1, date.getDate()).w;
+              if ((props.info?.year ?? 2022) < date.getFullYear()) {
+                return 'bg-gray-50';
+              } else if ((props.info?.year ?? 2022) === date.getFullYear()) {
+                if ((props.info?.month ?? 1) < date.getMonth() + 1) {
+                  return 'bg-gray-50';
+                } else if ((props.info?.month ?? 1) === date.getMonth() + 1) {
+                  if (headT < w) {
+                    return 'bg-gray-50';
+                  } else if (headT === w) {
+                    return 'bg-blue-50';
+                  }
+                }
+              }
+              return '';
+            }
+            case RecordType.day: {
+              const w = whichWeek(date.getFullYear(), date.getMonth() + 1, date.getDate()).w;
+              if ((props.info?.year ?? 2022) < date.getFullYear()) {
+                return 'bg-gray-50';
+              } else if ((props.info?.year ?? 2022) === date.getFullYear()) {
+                if ((props.info?.month ?? 1) < date.getMonth() + 1) {
+                  return 'bg-gray-50';
+                } else if ((props.info?.month ?? 1) === date.getMonth() + 1) {
+                  if ((props.info?.week ?? 1) < w) {
+                    return 'bg-gray-50';
+                  } else if ((props.info?.week ?? 1) === w) {
+                    if (headT < date.getDay()) {
+                      return 'bg-gray-50';
+                    } else if (headT === date.getDay()) {
+                      return 'bg-blue-50';
+                    }
+                  }
+                }
+              }
+              return '';
+            }
+            default:
+              return '';
+          }
+        })()
+      }
+    >
       <div
         className="border-b border-gray-300 flex justify-center items-center h-10 cursor-pointer hover:bg-gray-100 active:bg-gray-200"
         onClick={() => {

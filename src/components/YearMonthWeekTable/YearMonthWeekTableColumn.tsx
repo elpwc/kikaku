@@ -13,7 +13,8 @@ interface Props {
   head?: string;
   content?: YearRecord[];
   dragHover?: boolean;
-  isRightColumn: boolean;
+  /** 0: normal, 1: right column, 2: left column */
+  columnType: number;
   onRightColumnClick?: () => void;
   onDelete?: () => void;
   type?: RecordType;
@@ -124,7 +125,7 @@ export const YearMonthWeekTableColumn = (props: Props) => {
       <div
         className="border-b border-gray-300 flex justify-center items-center h-10 cursor-pointer hover:bg-gray-100 active:bg-gray-200"
         onClick={() => {
-          if (props.isRightColumn) {
+          if (props.columnType === 1) {
             props.onRightColumnClick?.();
           } else {
             switch (props.type) {
@@ -144,11 +145,13 @@ export const YearMonthWeekTableColumn = (props: Props) => {
           }
         }}
       >
-        {props.isRightColumn ? (
+        {props.columnType === 1 ? (
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
             <path fillRule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2Z" />
           </svg>
-        ) : (
+        ) : props.columnType === 2 ? (
+          <div></div>
+        ) :  (
           (() => {
             switch (props.type) {
               case RecordType.year:

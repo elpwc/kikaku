@@ -76,6 +76,7 @@ export default (props: P) => {
 
   return (
     <div className="flex border border-gray-300 mx-10 bg-white rounded-lg shadow-lg overscroll-x-auto" style={{ overflowX: 'scroll' }}>
+      {props.type === RecordType.day && <YearMonthWeekTableColumn columnType={2} />}
       {range(firstYMW, lastYMW + 1).map(head => {
         return (
           <YearMonthWeekTableColumn
@@ -102,7 +103,7 @@ export default (props: P) => {
                 : []
             }
             dragHover={props.dragHoverId === 'table_' + head}
-            isRightColumn={false}
+            columnType={0}
             onDelete={props.onDelete}
             type={props.type}
             info={props.info}
@@ -111,7 +112,7 @@ export default (props: P) => {
       })}
       {props.type === RecordType.year && (
         <YearMonthWeekTableColumn
-          isRightColumn={true}
+          columnType={1}
           onRightColumnClick={() => {
             setlastYMW(lastYMW + 1);
           }}

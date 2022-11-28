@@ -12,7 +12,6 @@ export default (props: P) => {
   const mylocation = useLocation();
 
   // let currentId: string = params.id as string;
-  console.log(mylocation);
 
   const date = new Date();
   const currentWeek = whichWeek(date.getFullYear(), date.getMonth() + 1, date.getDate());

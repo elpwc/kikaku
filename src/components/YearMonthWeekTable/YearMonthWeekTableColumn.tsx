@@ -3,18 +3,19 @@
 import { useEffect, useState } from 'react';
 import { Draggable, Droppable } from 'react-beautiful-dnd';
 import { useNavigate } from 'react-router';
+import { removeDayRecord } from '../../services/api/DayRecord';
 import { removeMonthRecord } from '../../services/api/MonthRecord';
 import { removeWeekRecord } from '../../services/api/WeekRecord';
 import { removeYearRecord } from '../../services/api/YearRecord';
-import { AffairListState, RecordType } from '../../utils/enums';
-import { YearRecord } from '../../utils/Record';
+import { AffairItemShowType, AffairListState, RecordType } from '../../utils/enums';
+import { RecordExtend, Schedule, YearRecord } from '../../utils/Record';
 import { getWeeks, months, weekdays, whichDate, whichWeek } from '../../utils/time';
 import { range } from '../../utils/tools';
 import AffairItem from '../AffairItem';
 
 interface Props {
   head?: string;
-  content?: YearRecord[];
+  content?: RecordExtend[];
   dragHover?: boolean;
   /** 0: normal, 1: right column, 2: left column */
   columnType: number;
@@ -45,7 +46,6 @@ export const YearMonthWeekTableColumn = (props: Props) => {
 
   useEffect(() => {
     if (props.type === RecordType.week) {
-      console.log(props.info?.year ?? 2022, props.info?.month ?? 1, Number(props.head) - 1, getWeeks(props.info?.year ?? 2022, props.info?.month ?? 1, true));
       setthisWeek(getWeeks(props.info?.year ?? 2022, props.info?.month ?? 1, true)[Number(props.head) - 1]);
     }
     if (props.type === RecordType.day) {
@@ -54,6 +54,7 @@ export const YearMonthWeekTableColumn = (props: Props) => {
   }, [props.type, props.info]);
 
   return (
+    /*column*/
     <div
       className={
         'border-r border-gray-300 transition-all ' +
@@ -83,7 +84,6 @@ export const YearMonthWeekTableColumn = (props: Props) => {
               return '';
             case RecordType.week: {
               const w = whichWeek(date.getFullYear(), date.getMonth() + 1, date.getDate()).w;
-              console.log(date,whichWeek(date.getFullYear(), date.getMonth() + 1, date.getDate()))
               if ((props.info?.year ?? 2022) < date.getFullYear()) {
                 return 'bg-gray-50';
               } else if ((props.info?.year ?? 2022) === date.getFullYear()) {
@@ -126,6 +126,7 @@ export const YearMonthWeekTableColumn = (props: Props) => {
         })()
       }
     >
+      {/*head*/}
       <div
         className="border-b border-gray-300 flex justify-center items-center h-10 cursor-pointer hover:bg-gray-100 active:bg-gray-200"
         onClick={() => {
@@ -163,7 +164,6 @@ export const YearMonthWeekTableColumn = (props: Props) => {
               case RecordType.month:
                 return months(Number(props.head));
               case RecordType.week:
-                console.log(thisWeek.start.m, thisWeek.start.d, thisWeek.end.m, thisWeek.end.d);
                 return (
                   <div className="text-center">
                     <p>{'第' + props.head + '周'}</p>
@@ -184,62 +184,71 @@ export const YearMonthWeekTableColumn = (props: Props) => {
         )}
       </div>
 
-      {props.type === RecordType.day ? (
+      {/*body*/}
+      {props.columnType === 2 ? (
         <div>
           {range(0, 12, 1).map(item => {
             return (
-              <Droppable droppableId={'table_' + props.head + '_' + item}>
+              <div style={{ minHeight: '3rem', minWidth: '5rem' }} className="border-b-gray-300 border-b text-center" key={item}>
+                <p>{item * 2 + ':00-' + (item * 2 + 2) + ':00'}</p>
+              </div>
+            );
+          })}
+        </div>
+      ) : props.type === RecordType.day ? (
+        <div>
+          {range(0, 12, 1).map(item => {
+            return (
+              <Droppable droppableId={'table_' + props.head + '_' + item} key={item}>
                 {(provided, snapshot) => (
                   <div
                     {...provided.droppableProps}
                     ref={provided.innerRef}
                     id={'table_' + props.head + '_' + item}
                     style={{ minHeight: '3rem', minWidth: '5rem' }}
-                    className="border-b-gray-300 border-b"
+                    className="border-b-gray-300 border-b flex flex-col justify-center"
                   >
-                    {props.content?.map((yearRecord, i) => {
-                      return (
-                        <Draggable key={yearRecord.id} draggableId={'table_' + props.head + '_' + yearRecord.id.toString()} index={i}>
-                          {(provided, snapshot) => (
-                            <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} id={'table_' + props.head + '_' + yearRecord.id.toString()}>
-                              <AffairItem
-                                state={AffairListState.Default}
-                                editable={false}
-                                deletable={true}
-                                onDelete={(affair, record) => {
-                                  switch (props.type) {
-                                    case RecordType.year:
-                                      removeYearRecord({ id: record?.id.toString() ?? '-1' }).then(e => {
-                                        props.onDelete?.();
-                                      });
-                                      break;
-                                    case RecordType.month:
-                                      removeMonthRecord({ id: record?.id.toString() ?? '-1' }).then(e => {
-                                        props.onDelete?.();
-                                      });
-                                      break;
-                                    case RecordType.week:
-                                      removeWeekRecord({ id: record?.id.toString() ?? '-1' }).then(e => {
-                                        props.onDelete?.();
-                                      });
-                                      break;
-                                    case RecordType.day:
-                                      //return record.day! === head;
-                                      return false;
-                                    default:
-                                      return false;
-                                  }
-                                  return false;
-                                }}
-                                record={yearRecord}
+                    {(() => {
+                      if (props.content && props.content?.length > 0) {
+                        const crtItems_t = (props.content! as Schedule[]).filter?.((c: Schedule) => {
+                          return (c?.startTime! ?? -1) === item * 2;
+                        });
+                        if (crtItems_t.length === 0) {
+                          return <></>;
+                        }
+                        const crtItem = crtItems_t[0];
+                        return (
+                          <Draggable key={crtItem.id} draggableId={'table_' + props.head + '_' + item + '_' + crtItem.id.toString()} index={0}>
+                            {(provided, snapshot) => (
+                              <div
+                                ref={provided.innerRef}
+                                {...provided.draggableProps}
+                                {...provided.dragHandleProps}
+                                id={'table_' + props.head + '_' + item + '_' + crtItem.id.toString()}
+                                className=""
                               >
-                                {yearRecord.affair}
-                              </AffairItem>
-                            </div>
-                          )}
-                        </Draggable>
-                      );
-                    })}
+                                <AffairItem
+                                  state={AffairListState.Default}
+                                  editable={false}
+                                  showType={AffairItemShowType.schedule}
+                                  deletable={true}
+                                  onDelete={(affair, record) => {
+                                    removeDayRecord({ id: record?.id.toString() ?? '-1' }).then(e => {
+                                      props.onDelete?.();
+                                    });
+                                  }}
+                                  record={crtItem}
+                                >
+                                  {crtItem.affair!}
+                                </AffairItem>
+                              </div>
+                            )}
+                          </Draggable>
+                        );
+                      } else {
+                        return <></>;
+                      }
+                    })()}
                   </div>
                 )}
               </Droppable>
@@ -258,6 +267,7 @@ export const YearMonthWeekTableColumn = (props: Props) => {
                         <AffairItem
                           state={AffairListState.Default}
                           editable={false}
+                          showType={AffairItemShowType.table}
                           deletable={true}
                           onDelete={(affair, record) => {
                             switch (props.type) {
@@ -276,9 +286,6 @@ export const YearMonthWeekTableColumn = (props: Props) => {
                                   props.onDelete?.();
                                 });
                                 break;
-                              case RecordType.day:
-                                //return record.day! === head;
-                                return false;
                               default:
                                 return false;
                             }
@@ -297,6 +304,7 @@ export const YearMonthWeekTableColumn = (props: Props) => {
           )}
         </Droppable>
       )}
+      {}
     </div>
   );
 };

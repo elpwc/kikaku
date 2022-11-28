@@ -8,12 +8,13 @@ import { findAllAffair } from '../../services/api/Affair';
 import { createYearRecord, findAllYearRecord, updateYearRecord } from '../../services/api/YearRecord';
 import { Affair } from '../../utils/Affair';
 import { RecordType } from '../../utils/enums';
-import { MonthRecord, RecordExtend, WeekRecord, YearRecord } from '../../utils/Record';
+import { MonthRecord, RecordExtend, Schedule, WeekRecord, YearRecord } from '../../utils/Record';
 import './index.css';
 import { Breadcrumb } from 'flowbite-react';
 import { createMonthRecord, findAllMonthRecord, updateMonthRecord } from '../../services/api/MonthRecord';
 import { createWeekRecord, findAllWeekRecord, updateWeekRecord } from '../../services/api/WeekRecord';
 import { getWeeks, getWeeksCount } from '../../utils/time';
+import { createDayRecord, findAllDayRecord, updateDayRecord } from '../../services/api/DayRecord';
 
 interface P {
   type: RecordType;
@@ -53,7 +54,6 @@ export default (props: P) => {
 
   const reloadAffairs = () => {
     findAllAffair().then(async e => {
-      console.log(e);
       let parent_records: RecordExtend[] = [];
       switch (props.type) {
         case RecordType.year:
@@ -64,10 +64,9 @@ export default (props: P) => {
           break;
         case RecordType.week:
           parent_records = (await findAllMonthRecord({ params: { year: props.info?.year, month: props.info?.month } })).data.records;
-          console.log(parent_records);
           break;
         case RecordType.day:
-          //setrecords((await findAllWeekRecord({year: props.info?.year, month: props.info?.month})).data.week_records)
+          parent_records = (await findAllWeekRecord({ params: { year: props.info?.year, month: props.info?.month, week: props.info?.week } })).data.records;
           break;
       }
 
@@ -171,7 +170,45 @@ export default (props: P) => {
           ]);
           break;
         case RecordType.day:
-          //setrecords((await findAllWeekRecord({year: props.info?.year, month: props.info?.month})).data.week_records)
+          setaffairsInTypes([
+            // 重要
+            e.data.affairs.filter((e: Affair) => {
+              return (
+                e.isImportant === true &&
+                (parent_records as Schedule[]).filter((r: Schedule) => {
+                  return r.affair.id === e.id;
+                }).length > 0
+              );
+            }),
+            // 计划内
+            e.data.affairs.filter((e: Affair) => {
+              return (
+                e.isImportant === false &&
+                (parent_records as Schedule[]).filter((r: Schedule) => {
+                  return r.affair.id === e.id;
+                }).length > 0
+              );
+            }),
+            // 重要计划外
+            e.data.affairs.filter((e: Affair) => {
+              return (
+                e.isImportant === true &&
+                (parent_records as Schedule[]).filter((r: Schedule) => {
+                  return r.affair.id === e.id;
+                }).length === 0
+              );
+            }),
+            // 计划外
+            e.data.affairs.filter((e: Affair) => {
+              return (
+                e.isImportant === false &&
+                (parent_records as Schedule[]).filter((r: Schedule) => {
+                  return r.affair.id === e.id;
+                }).length === 0
+              );
+            }),
+            [],
+          ]);
           break;
       }
     });
@@ -188,10 +225,9 @@ export default (props: P) => {
         break;
       case RecordType.week:
         records_t = (await findAllWeekRecord({ params: { year: props.info?.year, month: props.info?.month } })).data.records;
-        console.log(records_t);
         break;
       case RecordType.day:
-        //setrecords((await findAllWeekRecord({year: props.info?.year, month: props.info?.month})).data.week_records)
+        records_t = (await findAllDayRecord({ params: { year: props.info?.year, month: props.info?.month, week: props.info?.week } })).data.records;
         break;
     }
     setrecords(records_t);
@@ -213,10 +249,14 @@ export default (props: P) => {
   const onDragEnd = (result: DropResult) => {
     // dropped outside the list
     if (!result.destination) {
+      draggedAffair = null;
+      draggedRecord = null;
       return;
     }
 
     if (draggedAffair === null && draggedRecord === null) {
+      draggedAffair = null;
+      draggedRecord = null;
       return;
     }
 
@@ -227,6 +267,8 @@ export default (props: P) => {
 
     // 放回左边栏的情况
     if (destinationType === 'list') {
+      draggedAffair = null;
+      draggedRecord = null;
       return;
     }
 
@@ -240,6 +282,8 @@ export default (props: P) => {
               return record.year === Number(destinationHead) && record.affair.id === draggedAffair?.id;
             }).length > 0
           ) {
+            draggedAffair = null;
+            draggedRecord = null;
             return;
           }
           createYearRecord({ year: Number(destinationHead), affairId: draggedAffair?.id }).then(e => {
@@ -248,6 +292,8 @@ export default (props: P) => {
         } else if (draggedRecord !== null) {
           // 放回相同列的情况
           if (destinationType === 'table' && destinationHead === draggedRecord.year.toString()) {
+            draggedAffair = null;
+            draggedRecord = null;
             return;
           }
           // 已经有过了
@@ -256,6 +302,8 @@ export default (props: P) => {
               return record.year === Number(destinationHead) && record.affair.id === draggedRecord?.affair.id;
             }).length > 0
           ) {
+            draggedAffair = null;
+            draggedRecord = null;
             return;
           }
           updateYearRecord({ id: draggedRecord.id.toString() }, { year: Number(destinationHead) }).then(e => {
@@ -272,6 +320,8 @@ export default (props: P) => {
               return record.month === Number(destinationHead) && record.affair.id === draggedAffair?.id;
             }).length > 0
           ) {
+            draggedAffair = null;
+            draggedRecord = null;
             return;
           }
           createMonthRecord({ month: Number(destinationHead), year: props.info?.year ?? 0, affairId: draggedAffair?.id }).then(e => {
@@ -280,6 +330,8 @@ export default (props: P) => {
         } else if (draggedRecord !== null) {
           // 放回相同列的情况
           if (destinationType === 'table' && destinationHead === (draggedRecord as MonthRecord).month.toString()) {
+            draggedAffair = null;
+            draggedRecord = null;
             return;
           }
           // 已经有过了
@@ -288,6 +340,8 @@ export default (props: P) => {
               return record.month === Number(destinationHead) && record.affair.id === draggedRecord?.affair.id;
             }).length > 0
           ) {
+            draggedAffair = null;
+            draggedRecord = null;
             return;
           }
           updateMonthRecord({ id: draggedRecord.id.toString() }, { month: Number(destinationHead) }).then(e => {
@@ -304,6 +358,8 @@ export default (props: P) => {
               return record.week === Number(destinationHead) && record.affair.id === draggedAffair?.id;
             }).length > 0
           ) {
+            draggedAffair = null;
+            draggedRecord = null;
             return;
           }
           createWeekRecord({ week: Number(destinationHead), month: props.info?.month ?? 1, year: props.info?.year ?? 0, affairId: draggedAffair?.id }).then(e => {
@@ -312,6 +368,8 @@ export default (props: P) => {
         } else if (draggedRecord !== null) {
           // 放回相同列的情况
           if (destinationType === 'table' && destinationHead === (draggedRecord as WeekRecord).week.toString()) {
+            draggedAffair = null;
+            draggedRecord = null;
             return;
           }
           // 已经有过了
@@ -320,6 +378,8 @@ export default (props: P) => {
               return record.week === Number(destinationHead) && record.affair.id === draggedRecord?.affair.id;
             }).length > 0
           ) {
+            draggedAffair = null;
+            draggedRecord = null;
             return;
           }
           updateWeekRecord({ id: draggedRecord.id.toString() }, { week: Number(destinationHead) }).then(e => {
@@ -328,48 +388,60 @@ export default (props: P) => {
         }
         break;
       case RecordType.day:
-        // if (draggedAffair !== null) {
-        //   // 拖拽了左边栏的item
-        //   // 已经有过了
-        //   if (
-        //     (records as WeekRecord[]).filter((record: WeekRecord) => {
-        //       return record.week === Number(destinationHead) && record.affair.id === draggedAffair?.id;
-        //     }).length > 0
-        //   ) {
-        //     return;
-        //   }
-        //   createWeekRecord({ week: Number(destinationHead), month: props.info?.month ?? 1, year: props.info?.year ?? 0, affairId: draggedAffair?.id }).then(e => {
-        //     reloadRecords();
-        //   });
-        // } else if (draggedRecord !== null) {
-        //   // 放回相同列的情况
-        //   if (destinationType === 'table' && destinationHead === (draggedRecord as WeekRecord).week.toString()) {
-        //     return;
-        //   }
-        //   // 已经有过了
-        //   if (
-        //     (records as WeekRecord[]).filter((record: WeekRecord) => {
-        //       return record.week === Number(destinationHead) && record.affair.id === draggedRecord?.affair.id;
-        //     }).length > 0
-        //   ) {
-        //     return;
-        //   }
-        //   updateWeekRecord({ id: draggedRecord.id.toString() }, { week: Number(destinationHead) }).then(e => {
-        //     reloadRecords();
-        //   });
-        // }
+        const destinationLine = result.destination.droppableId.split('_')[2];
+        if (draggedAffair !== null) {
+          // 拖拽了左边栏的item
+          // 已经有过了
+          if (
+            (records as Schedule[]).filter((record: Schedule) => {
+              return record.day === Number(destinationHead) && record.startTime === Number(destinationLine) * 2;
+            }).length > 0
+          ) {
+            draggedAffair = null;
+            draggedRecord = null;
+            return;
+          }
+          createDayRecord({
+            startTime: Number(destinationLine) * 2,
+            endTime: (Number(destinationLine) + 1) * 2,
+            day: Number(destinationHead),
+            week: props.info?.week ?? 1,
+            month: props.info?.month ?? 1,
+            year: props.info?.year ?? 0,
+            affairId: draggedAffair?.id,
+          }).then(e => {
+            reloadRecords();
+          });
+        } else if (draggedRecord !== null) {
+          // 放回相同列相同行的情况
+          if (destinationType === 'table' && destinationHead === (draggedRecord as Schedule).day.toString() && destinationLine === ((draggedRecord as Schedule).startTime * 2).toString()) {
+            draggedAffair = null;
+            draggedRecord = null;
+            return;
+          }
+          // 已经有过了
+          if (
+            (records as Schedule[]).filter((record: Schedule) => {
+              return record.day === Number(destinationHead) && record.startTime === Number(destinationLine) * 2;
+            }).length > 0
+          ) {
+            draggedAffair = null;
+            draggedRecord = null;
+            return;
+          }
+          updateDayRecord({ id: draggedRecord.id.toString() }, { day: Number(destinationHead), startTime: Number(destinationLine) * 2, endTime: (Number(destinationLine) + 1) * 2 }).then(e => {
+            reloadRecords();
+          });
+        }
         break;
     }
 
     draggedAffair = null;
     draggedRecord = null;
     setdragHoverId('');
-    console.log(result);
   };
 
   const onDragUpdate = (initial: DragUpdate) => {
-    console.log(initial);
-
     if (!initial.destination) {
       return;
     }
@@ -378,8 +450,6 @@ export default (props: P) => {
   };
 
   const onDragStart = (initial: DragStart) => {
-    console.log(initial);
-
     const sourceType = initial.source.droppableId.split('_')[0];
     if (sourceType === 'list') {
       const state = Number(initial.source.droppableId.split('_')[1]);
@@ -405,9 +475,10 @@ export default (props: P) => {
           })[0];
           break;
         case RecordType.day:
-          // draggedRecord = (records as []).filter((record: WeekRecord) => {
-          //   return record.week === head && record.id === Number(initial.draggableId.split('_')[2]);
-          // })[0];
+          const line = Number(initial.source.droppableId.split('_')[2]);
+          draggedRecord = (records as [Schedule]).filter((record: Schedule) => {
+            return record.day === head && record.startTime === line * 2 && record.id === Number(initial.draggableId.split('_')[3]);
+          })[0];
           break;
       }
     }
@@ -503,7 +574,7 @@ export default (props: P) => {
                     );
                   }}
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
                     <path
                       fillRule="evenodd"
                       d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-4.5-.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5z"
@@ -539,7 +610,7 @@ export default (props: P) => {
                     );
                   }}
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
                     <path
                       fillRule="evenodd"
                       d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z"

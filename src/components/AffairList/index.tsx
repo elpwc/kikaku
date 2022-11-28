@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router';
 import { Affair } from '../../utils/Affair';
-import { AffairListState } from '../../utils/enums';
+import { AffairItemShowType, AffairListState } from '../../utils/enums';
 import AffairItem from '../AffairItem';
 import './index.css';
 import { Droppable, Draggable } from 'react-beautiful-dnd';
@@ -73,7 +73,7 @@ export default (props: P) => {
                     <Draggable key={affair.id} draggableId={'list_' + props.state.toString() + '_' + affair.id.toString()} index={i}>
                       {(provided, snapshot) => (
                         <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} id={'list_' + props.state.toString() + '_' + affair.id.toString()}>
-                          <AffairItem state={props.state} draggable={true}>
+                          <AffairItem state={props.state} draggable={true} showType={AffairItemShowType.leftBar}>
                             {affair}
                           </AffairItem>
                         </div>
@@ -89,7 +89,7 @@ export default (props: P) => {
             {props.children.map((affair, i) => {
               return (
                 <div id={'list_' + props.state.toString() + '_' + affair.id.toString()} key={affair.id}>
-                  <AffairItem state={props.state} draggable={false}>
+                  <AffairItem state={props.state} draggable={false} showType={AffairItemShowType.leftBar}>
                     {affair}
                   </AffairItem>
                 </div>

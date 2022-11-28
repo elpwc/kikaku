@@ -21,7 +21,6 @@ export default (props: P) => {
 
   const updateAffairs = () => {
     findAllAffair().then((e: any) => {
-      console.log(e);
       setaffairs(e.data.affairs);
     });
   };
@@ -32,12 +31,10 @@ export default (props: P) => {
   }, []);
 
   useEffect(() => {
-    console.log(currentId);
     if (currentId) {
       setisModify(true);
       findOneAffair({ id: currentId })
         .then((e: any) => {
-          console.log(e);
           if (e.code === 200) {
             setaffair(e.data);
           }

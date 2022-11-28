@@ -1,3 +1,4 @@
+/* eslint-disable no-extra-parens */
 /* eslint-disable valid-jsdoc */
 /** 各个月份的日数 */
 export const monthsDays = (month: number, isLeapYear: boolean = false) => [31, isLeapYear ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month - 1];
@@ -91,7 +92,6 @@ export const getWeeks = (y: number, m: number, includeDateInOtherMonths: boolean
 export const whichWeek = (y: number, m: number, d: number): { y: number; m: number; w: number } => {
   let crtMWeeks = getWeeks(y, m, true);
 
-  console.log(crtMWeeks);
   let res = -1;
 
   if (m === crtMWeeks[0].start.m && d < crtMWeeks[0].start.d) {

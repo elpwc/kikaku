@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Affair } from '../../utils/Affair';
-import { AffairListState } from '../../utils/enums';
+import { AffairItemShowType, AffairListState } from '../../utils/enums';
 import { YearRecord } from '../../utils/Record';
 import './index.css';
 
@@ -15,6 +15,7 @@ interface Props {
   deletable?: boolean;
   onDelete?: (affair?: Affair, record?: YearRecord) => void;
   record?: YearRecord;
+  showType: AffairItemShowType;
 }
 
 export default (props: Props) => {
@@ -61,22 +62,25 @@ export default (props: Props) => {
       }}
       style={props.style}
       className={
-        'AffairItem text-normal text-center px-3 py-2 m-3 rounded transition-all flex ' +
+        'AffairItem text-normal text-center px-3 py-2 rounded transition-all flex ' +
         (props.draggable ? 'cursor-grab' : '') +
         props.className +
+        ' ' +
+        (props.showType === AffairItemShowType.schedule ? '' : 'm-3') +
+        ' ' +
         fontColor +
         (() => {
           switch (props.state) {
             case AffairListState.PlanningImportant:
-              return ' font-bold bg-red-400 ring ring-red-200 hover:bg-red-300';
+              return ' font-bold bg-red-400 ring-red-200 hover:bg-red-300' + (props.showType === AffairItemShowType.schedule ? '' : ' ring');
             case AffairListState.OutsidePlanImportant:
-              return ' font-bold bg-gray-400 ring-gray-300 hover:bg-red-300';
+              return ' font-bold bg-gray-400 ring-gray-300 hover:bg-red-300' + (props.showType === AffairItemShowType.schedule ? '' : ' ring');
             case AffairListState.Planning:
-              return ' bg-green-400 ring ring-green-300';
+              return ' bg-green-400 ring-green-300' + (props.showType === AffairItemShowType.schedule ? '' : ' ring');
             case AffairListState.OutsidePlan:
-              return ' bg-gray-400 ring ring-gray-300';
+              return ' bg-gray-400 ring-gray-300' + (props.showType === AffairItemShowType.schedule ? '' : ' ring');
             case AffairListState.Default:
-              return ' bg-white ring ring-gray-300';
+              return ' bg-white ring-gray-300' + (props.showType === AffairItemShowType.schedule ? '' : ' ring');
             default:
               return '';
           }

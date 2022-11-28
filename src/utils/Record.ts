@@ -21,7 +21,7 @@ export interface WeekRecord extends RecordExtend {
 export interface Schedule extends RecordExtend {
   week: number;
   month: number;
-  dayOfWeek: number;
-  startTime: Date;
-  endTime: Date;
+  day: number;
+  startTime: number;
+  endTime: number;
 }

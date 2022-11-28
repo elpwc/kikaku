@@ -95,7 +95,8 @@ export default (props: P) => {
                         // @ts-ignore
                         return record.week! === head;
                       case RecordType.day:
-                      //return record.day! === head;
+                        // @ts-ignore
+                        return record.day! === head;
                       default:
                         return false;
                     }

@@ -89,51 +89,30 @@ export const getWeeks = (y: number, m: number, includeDateInOtherMonths: boolean
 
 // 日期在哪一周
 export const whichWeek = (y: number, m: number, d: number): { y: number; m: number; w: number } => {
-  const crtMWeeks = getWeeks(y, m, true);
+  let crtMWeeks = getWeeks(y, m, true);
 
+  console.log(crtMWeeks);
   let res = -1;
 
+  if (m === crtMWeeks[0].start.m && d < crtMWeeks[0].start.d) {
+    return { y: m === 1 ? y - 1 : y, m: m === 1 ? 12 : m - 1, w: getWeeksCount(m === 1 ? y - 1 : y, m === 1 ? 12 : m - 1) };
+  }
+
+  if (m === crtMWeeks[crtMWeeks.length - 1].end.m && d > crtMWeeks[crtMWeeks.length - 1].end.d) {
+    return { y: m === 12 ? y + 1 : y, m: m === 12 ? 1 : m + 1, w: 1 };
+  }
+
+  crtMWeeks = getWeeks(y, m, false);
+
   for (let i = 0; i < crtMWeeks.length; i++) {
-    if (m >= crtMWeeks[i].start.m && d >= crtMWeeks[i].start.d && m <= crtMWeeks[i].start.m && d <= crtMWeeks[i].start.d) {
-      res = i;
+    if (d >= crtMWeeks[i].start.d && d <= crtMWeeks[i].end.d) {
+      res = i + 1;
       break;
     }
   }
 
   if (res !== -1) {
     return { y, m, w: res };
-  }
-
-  if (d <= 7) {
-    const crtMWeeks = getWeeks(m === 1 ? y - 1 : y, m === 1 ? 12 : m - 1, true);
-
-    let res = -1;
-
-    for (let i = 0; i < crtMWeeks.length; i++) {
-      if (m >= crtMWeeks[i].start.m && d >= crtMWeeks[i].start.d && m <= crtMWeeks[i].start.m && d <= crtMWeeks[i].start.d) {
-        res = i;
-        break;
-      }
-    }
-
-    if (res !== -1) {
-      return { y: m === 1 ? y - 1 : y, m: m === 1 ? 12 : m, w: res };
-    }
-  } else if (d >= 21) {
-    const crtMWeeks = getWeeks(m === 12 ? y + 1 : y, m === 12 ? 1 : m + 1, true);
-
-    let res = -1;
-
-    for (let i = 0; i < crtMWeeks.length; i++) {
-      if (m >= crtMWeeks[i].start.m && d >= crtMWeeks[i].start.d && m <= crtMWeeks[i].start.m && d <= crtMWeeks[i].start.d) {
-        res = i;
-        break;
-      }
-    }
-
-    if (res !== -1) {
-      return { y: m === 12 ? y + 1 : y, m: m === 12 ? 1 : m + 1, w: res };
-    }
   }
 
   return { y, m, w: 1 };

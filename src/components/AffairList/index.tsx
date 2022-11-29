@@ -46,7 +46,7 @@ export default (props: P) => {
           })()
         }
       >
-        <div>
+        <div className='pl-3 pt-2'>
           {(() => {
             switch (props.state) {
               case AffairListState.PlanningImportant:

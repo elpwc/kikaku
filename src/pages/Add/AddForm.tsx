@@ -9,7 +9,7 @@ import { Button, Modal } from 'flowbite-react';
 let times = '-1';
 export const AddForm = (props: { isModify?: boolean; affair?: Affair | undefined; onSubmit: () => void }) => {
   const defaultValues = {
-    name: '123',
+    name: '',
     content: '',
     deadline: '',
     continuePeriod_min: 2,

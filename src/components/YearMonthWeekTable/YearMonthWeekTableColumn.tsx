@@ -7,15 +7,18 @@ import { removeDayRecord } from '../../services/api/DayRecord';
 import { removeMonthRecord } from '../../services/api/MonthRecord';
 import { removeWeekRecord } from '../../services/api/WeekRecord';
 import { removeYearRecord } from '../../services/api/YearRecord';
+import { Affair } from '../../utils/Affair';
 import { AffairItemShowType, AffairListState, RecordType } from '../../utils/enums';
 import { RecordExtend, Schedule, YearRecord } from '../../utils/Record';
 import { getWeeks, months, weekdays, whichDate, whichWeek } from '../../utils/time';
 import { range } from '../../utils/tools';
+import { StateInfo } from '../../utils/types';
 import AffairItem from '../AffairItem';
 
 interface Props {
   head?: string;
   content?: RecordExtend[];
+  stateInfo?: StateInfo;
   dragHover?: boolean;
   /** 0: normal, 1: right column, 2: left column */
   columnType: number;
@@ -228,7 +231,15 @@ export const YearMonthWeekTableColumn = (props: Props) => {
                                 className=""
                               >
                                 <AffairItem
-                                  state={AffairListState.Default}
+                                  state={
+                                    props.stateInfo?.findIndex((affairs: Affair[]) => {
+                                      return (
+                                        affairs.findIndex(a => {
+                                          return a.id === crtItem.affair.id;
+                                        }) !== -1
+                                      );
+                                    }) ?? 0
+                                  }
                                   editable={false}
                                   showType={AffairItemShowType.schedule}
                                   deletable={true}
@@ -265,7 +276,15 @@ export const YearMonthWeekTableColumn = (props: Props) => {
                     {(provided, snapshot) => (
                       <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} id={'table_' + props.head + '_' + yearRecord.id.toString()}>
                         <AffairItem
-                          state={AffairListState.Default}
+                          state={
+                            props.stateInfo?.findIndex((affairs: Affair[]) => {
+                              return (
+                                affairs.findIndex(a => {
+                                  return a.id === yearRecord.affair.id;
+                                }) !== -1
+                              );
+                            }) ?? 0
+                          }
                           editable={false}
                           showType={AffairItemShowType.table}
                           deletable={true}

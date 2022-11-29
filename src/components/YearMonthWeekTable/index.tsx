@@ -4,12 +4,13 @@ import { RecordType } from '../../utils/enums';
 import { RecordExtend } from '../../utils/Record';
 import { getWeeksCount } from '../../utils/time';
 import { range } from '../../utils/tools';
+import { StateInfo } from '../../utils/types';
 import './index.css';
 import { YearMonthWeekTableColumn } from './YearMonthWeekTableColumn';
 
 interface P {
-  drag: boolean;
   dragHoverId: string;
+  stateInfo: StateInfo;
   children: RecordExtend[] | null;
   onDelete: () => void;
   type: RecordType;
@@ -82,6 +83,7 @@ export default (props: P) => {
           <YearMonthWeekTableColumn
             key={head}
             head={head.toString()}
+            stateInfo={props.stateInfo}
             content={
               props.children
                 ? props.children?.filter((record: RecordExtend) => {

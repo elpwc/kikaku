@@ -27,7 +27,7 @@ export default (props: P) => {
           <nav className="flex">
             <MenuItem to="/">
               <p style={{ margin: 0, fontWeight: 500 }}>
-                <span className="text-red-600">Ki</span>kaku
+                <span className="text-red-600">Ki</span>ʞaʞu
               </p>
             </MenuItem>
             <MenuItem to="/plan" checked={mylocation.pathname.split('/')[1] === 'plan' && mylocation.pathname.split('/').length < 5}>
@@ -39,9 +39,11 @@ export default (props: P) => {
             <MenuItem to="/add" checked={mylocation.pathname.split('/')[1] === 'add'}>
               添加
             </MenuItem>
+            {/*
             <MenuItem to="/" checked={mylocation.pathname.split('/')[1] === '?'}>
               一览
             </MenuItem>
+            */}
             <MenuItem to="/about" checked={mylocation.pathname.split('/')[1] === '?'}>
               关于
             </MenuItem>

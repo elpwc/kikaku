@@ -1,3 +1,4 @@
+/* eslint-disable valid-jsdoc */
 /* eslint-disable no-extra-parens */
 import { useEffect, useState } from 'react';
 import { DragDropContext, DragStart, DragUpdate, DropResult } from 'react-beautiful-dnd';
@@ -15,6 +16,7 @@ import { createMonthRecord, findAllMonthRecord, updateMonthRecord } from '../../
 import { createWeekRecord, findAllWeekRecord, updateWeekRecord } from '../../services/api/WeekRecord';
 import { getWeeks, getWeeksCount } from '../../utils/time';
 import { createDayRecord, findAllDayRecord, updateDayRecord } from '../../services/api/DayRecord';
+import { StateInfo } from '../../utils/types';
 
 interface P {
   type: RecordType;
@@ -25,7 +27,9 @@ interface P {
   };
 }
 
+/** 从左边拖拽的 */
 let draggedAffair: Affair | null;
+/** 从右边拖拽的 */
 let draggedRecord: RecordExtend | null;
 
 export default (props: P) => {
@@ -33,9 +37,7 @@ export default (props: P) => {
   const navigate = useNavigate();
   const mylocation = useLocation();
 
-  const [affairs, setaffairs] = useState([]);
-  const [affairsInTypes, setaffairsInTypes] = useState(/*im plan outim out normal*/ [[], [], [], [], []]);
-  const [drag, setdrag] = useState(false);
+  const [affairsInTypes, setaffairsInTypes]: [StateInfo, any] = useState(/*im plan outim out normal*/ [[], [], [], [], []]);
   const [dragHoverId, setdragHoverId] = useState('');
   const [records, setrecords]: [RecordExtend[], any] = useState([]);
   /** 只适用于Schedule页 */
@@ -51,6 +53,13 @@ export default (props: P) => {
   });
 
   // let currentId: string = params.id as string;
+
+  /** 重置拖拽的信息 */
+  const resetDragStates = () => {
+    draggedAffair = null;
+    draggedRecord = null;
+    setdragHoverId('');
+  };
 
   const reloadAffairs = () => {
     findAllAffair().then(async e => {
@@ -70,7 +79,6 @@ export default (props: P) => {
           break;
       }
 
-      setaffairs(e.data.affairs);
       switch (props.type) {
         case RecordType.year:
           setaffairsInTypes([
@@ -249,14 +257,12 @@ export default (props: P) => {
   const onDragEnd = (result: DropResult) => {
     // dropped outside the list
     if (!result.destination) {
-      draggedAffair = null;
-      draggedRecord = null;
+      resetDragStates();
       return;
     }
 
     if (draggedAffair === null && draggedRecord === null) {
-      draggedAffair = null;
-      draggedRecord = null;
+      resetDragStates();
       return;
     }
 
@@ -267,8 +273,7 @@ export default (props: P) => {
 
     // 放回左边栏的情况
     if (destinationType === 'list') {
-      draggedAffair = null;
-      draggedRecord = null;
+      resetDragStates();
       return;
     }
 
@@ -282,8 +287,7 @@ export default (props: P) => {
               return record.year === Number(destinationHead) && record.affair.id === draggedAffair?.id;
             }).length > 0
           ) {
-            draggedAffair = null;
-            draggedRecord = null;
+            resetDragStates();
             return;
           }
           createYearRecord({ year: Number(destinationHead), affairId: draggedAffair?.id }).then(e => {
@@ -292,8 +296,7 @@ export default (props: P) => {
         } else if (draggedRecord !== null) {
           // 放回相同列的情况
           if (destinationType === 'table' && destinationHead === draggedRecord.year.toString()) {
-            draggedAffair = null;
-            draggedRecord = null;
+            resetDragStates();
             return;
           }
           // 已经有过了
@@ -302,8 +305,7 @@ export default (props: P) => {
               return record.year === Number(destinationHead) && record.affair.id === draggedRecord?.affair.id;
             }).length > 0
           ) {
-            draggedAffair = null;
-            draggedRecord = null;
+            resetDragStates();
             return;
           }
           updateYearRecord({ id: draggedRecord.id.toString() }, { year: Number(destinationHead) }).then(e => {
@@ -320,8 +322,7 @@ export default (props: P) => {
               return record.month === Number(destinationHead) && record.affair.id === draggedAffair?.id;
             }).length > 0
           ) {
-            draggedAffair = null;
-            draggedRecord = null;
+            resetDragStates();
             return;
           }
           createMonthRecord({ month: Number(destinationHead), year: props.info?.year ?? 0, affairId: draggedAffair?.id }).then(e => {
@@ -330,8 +331,7 @@ export default (props: P) => {
         } else if (draggedRecord !== null) {
           // 放回相同列的情况
           if (destinationType === 'table' && destinationHead === (draggedRecord as MonthRecord).month.toString()) {
-            draggedAffair = null;
-            draggedRecord = null;
+            resetDragStates();
             return;
           }
           // 已经有过了
@@ -340,8 +340,7 @@ export default (props: P) => {
               return record.month === Number(destinationHead) && record.affair.id === draggedRecord?.affair.id;
             }).length > 0
           ) {
-            draggedAffair = null;
-            draggedRecord = null;
+            resetDragStates();
             return;
           }
           updateMonthRecord({ id: draggedRecord.id.toString() }, { month: Number(destinationHead) }).then(e => {
@@ -358,8 +357,7 @@ export default (props: P) => {
               return record.week === Number(destinationHead) && record.affair.id === draggedAffair?.id;
             }).length > 0
           ) {
-            draggedAffair = null;
-            draggedRecord = null;
+            resetDragStates();
             return;
           }
           createWeekRecord({ week: Number(destinationHead), month: props.info?.month ?? 1, year: props.info?.year ?? 0, affairId: draggedAffair?.id }).then(e => {
@@ -368,8 +366,7 @@ export default (props: P) => {
         } else if (draggedRecord !== null) {
           // 放回相同列的情况
           if (destinationType === 'table' && destinationHead === (draggedRecord as WeekRecord).week.toString()) {
-            draggedAffair = null;
-            draggedRecord = null;
+            resetDragStates();
             return;
           }
           // 已经有过了
@@ -378,8 +375,7 @@ export default (props: P) => {
               return record.week === Number(destinationHead) && record.affair.id === draggedRecord?.affair.id;
             }).length > 0
           ) {
-            draggedAffair = null;
-            draggedRecord = null;
+            resetDragStates();
             return;
           }
           updateWeekRecord({ id: draggedRecord.id.toString() }, { week: Number(destinationHead) }).then(e => {
@@ -397,8 +393,7 @@ export default (props: P) => {
               return record.day === Number(destinationHead) && record.startTime === Number(destinationLine) * 2;
             }).length > 0
           ) {
-            draggedAffair = null;
-            draggedRecord = null;
+            resetDragStates();
             return;
           }
           createDayRecord({
@@ -415,8 +410,7 @@ export default (props: P) => {
         } else if (draggedRecord !== null) {
           // 放回相同列相同行的情况
           if (destinationType === 'table' && destinationHead === (draggedRecord as Schedule).day.toString() && destinationLine === ((draggedRecord as Schedule).startTime * 2).toString()) {
-            draggedAffair = null;
-            draggedRecord = null;
+            resetDragStates();
             return;
           }
           // 已经有过了
@@ -425,8 +419,7 @@ export default (props: P) => {
               return record.day === Number(destinationHead) && record.startTime === Number(destinationLine) * 2;
             }).length > 0
           ) {
-            draggedAffair = null;
-            draggedRecord = null;
+            resetDragStates();
             return;
           }
           updateDayRecord({ id: draggedRecord.id.toString() }, { day: Number(destinationHead), startTime: Number(destinationLine) * 2, endTime: (Number(destinationLine) + 1) * 2 }).then(e => {
@@ -436,9 +429,7 @@ export default (props: P) => {
         break;
     }
 
-    draggedAffair = null;
-    draggedRecord = null;
-    setdragHoverId('');
+    resetDragStates();
   };
 
   const onDragUpdate = (initial: DragUpdate) => {
@@ -622,8 +613,8 @@ export default (props: P) => {
           </div>
 
           <YearMonthWeekTable
-            drag={drag}
             dragHoverId={dragHoverId}
+            stateInfo={affairsInTypes}
             onDelete={() => {
               reloadRecords();
             }}

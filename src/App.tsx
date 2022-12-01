@@ -4,6 +4,7 @@ import './App.css';
 import Add from './pages/Add';
 import ErrorPage from './pages/ErrorPage';
 import Home from './pages/Home';
+import Login from './pages/Login';
 import Main from './pages/Main';
 import Month from './pages/Month';
 import Register from './pages/Register';
@@ -25,7 +26,7 @@ function App() {
           <Route path="plan/:year/:month/:week" element={<Schedule />}></Route>
 
           <Route path="register" element={<Register />}></Route>
-          <Route path="login" element={<ErrorPage />}></Route>
+          <Route path="login" element={<Login />}></Route>
 
           <Route path="404" element={<ErrorPage />}></Route>
           <Route path="*" element={<ErrorPage />}></Route>

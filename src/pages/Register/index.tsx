@@ -42,7 +42,7 @@ export default (props: P) => {
                   .then(e => {
                     resetForm();
                     settip('注册成功喵, 马上跳转');
-                    navigate('/');
+                    navigate('/login');
                   })
                   .catch(e => {
                     if (e.status === 400) {

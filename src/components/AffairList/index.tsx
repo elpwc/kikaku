@@ -1,3 +1,4 @@
+/* eslint-disable no-else-return */
 import { useEffect } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router';
 import { Affair } from '../../utils/Affair';
@@ -46,7 +47,7 @@ export default (props: P) => {
           })()
         }
       >
-        <div className='pl-3 pt-2'>
+        <div className="pl-3 pt-2">
           {(() => {
             switch (props.state) {
               case AffairListState.PlanningImportant:
@@ -69,17 +70,21 @@ export default (props: P) => {
             {(provided, snapshot) => (
               <div {...provided.droppableProps} ref={provided.innerRef} id={'list_' + props.state.toString()}>
                 {props.children.map((affair, i) => {
-                  return (
-                    <Draggable key={affair.id} draggableId={'list_' + props.state.toString() + '_' + affair.id.toString()} index={i}>
-                      {(provided, snapshot) => (
-                        <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} id={'list_' + props.state.toString() + '_' + affair.id.toString()}>
-                          <AffairItem state={props.state} draggable={true} showType={AffairItemShowType.leftBar}>
-                            {affair}
-                          </AffairItem>
-                        </div>
-                      )}
-                    </Draggable>
-                  );
+                  if (!affair.deleted) {
+                    return (
+                      <Draggable key={affair.id} draggableId={'list_' + props.state.toString() + '_' + affair.id.toString()} index={i}>
+                        {(provided, snapshot) => (
+                          <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} id={'list_' + props.state.toString() + '_' + affair.id.toString()}>
+                            <AffairItem state={props.state} draggable={true} showType={AffairItemShowType.leftBar}>
+                              {affair}
+                            </AffairItem>
+                          </div>
+                        )}
+                      </Draggable>
+                    );
+                  } else {
+                    return <></>;
+                  }
                 })}
               </div>
             )}

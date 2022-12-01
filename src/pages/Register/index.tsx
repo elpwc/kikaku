@@ -98,7 +98,7 @@ export default (props: P) => {
               />
             </div>
             <button type="submit" className="btn-blue btn-blue-ring">
-              注册{buttonAvailable ? '114' : '414'}
+              注册
             </button>
             <div>{tip}</div>
           </Form>

@@ -65,37 +65,37 @@ export const YearMonthWeekTableColumn = (props: Props) => {
         (() => {
           const date = new Date();
           const headT = Number(props.head);
+          const currentDate = whichWeek(date.getFullYear(), date.getMonth() + 1, date.getDate());
           switch (props.type) {
             case RecordType.year:
-              if (headT < date.getFullYear()) {
+              if (headT < currentDate.y) {
                 return 'bg-gray-50';
-              } else if (headT === date.getFullYear()) {
+              } else if (headT === currentDate.y) {
                 return 'bg-blue-50';
               }
               return '';
             case RecordType.month:
-              if ((props.info?.year ?? 2022) < date.getFullYear()) {
+              if ((props.info?.year ?? 2022) < currentDate.y) {
                 return 'bg-gray-50';
-              } else if ((props.info?.year ?? 2022) === date.getFullYear()) {
-                if (headT < date.getMonth() + 1) {
+              } else if ((props.info?.year ?? 2022) === currentDate.y) {
+                if (headT < currentDate.m) {
                   return 'bg-gray-50';
-                } else if (headT === date.getMonth() + 1) {
+                } else if (headT === currentDate.m) {
                   return 'bg-blue-50';
                 }
               }
 
               return '';
             case RecordType.week: {
-              const w = whichWeek(date.getFullYear(), date.getMonth() + 1, date.getDate()).w;
-              if ((props.info?.year ?? 2022) < date.getFullYear()) {
+              if ((props.info?.year ?? 2022) < currentDate.y) {
                 return 'bg-gray-50';
-              } else if ((props.info?.year ?? 2022) === date.getFullYear()) {
-                if ((props.info?.month ?? 1) < date.getMonth() + 1) {
+              } else if ((props.info?.year ?? 2022) === currentDate.y) {
+                if ((props.info?.month ?? 1) < currentDate.m) {
                   return 'bg-gray-50';
-                } else if ((props.info?.month ?? 1) === date.getMonth() + 1) {
-                  if (headT < w) {
+                } else if ((props.info?.month ?? 1) === currentDate.m) {
+                  if (headT < currentDate.w) {
                     return 'bg-gray-50';
-                  } else if (headT === w) {
+                  } else if (headT === currentDate.w) {
                     return 'bg-blue-50';
                   }
                 }
@@ -103,16 +103,15 @@ export const YearMonthWeekTableColumn = (props: Props) => {
               return '';
             }
             case RecordType.day: {
-              const w = whichWeek(date.getFullYear(), date.getMonth() + 1, date.getDate()).w;
-              if ((props.info?.year ?? 2022) < date.getFullYear()) {
+              if ((props.info?.year ?? 2022) < currentDate.y) {
                 return 'bg-gray-50';
-              } else if ((props.info?.year ?? 2022) === date.getFullYear()) {
-                if ((props.info?.month ?? 1) < date.getMonth() + 1) {
+              } else if ((props.info?.year ?? 2022) === currentDate.y) {
+                if ((props.info?.month ?? 1) < currentDate.m) {
                   return 'bg-gray-50';
-                } else if ((props.info?.month ?? 1) === date.getMonth() + 1) {
-                  if ((props.info?.week ?? 1) < w) {
+                } else if ((props.info?.month ?? 1) === currentDate.m) {
+                  if ((props.info?.week ?? 1) < currentDate.w) {
                     return 'bg-gray-50';
-                  } else if ((props.info?.week ?? 1) === w) {
+                  } else if ((props.info?.week ?? 1) === currentDate.w) {
                     if (headT < date.getDay()) {
                       return 'bg-gray-50';
                     } else if (headT === date.getDay()) {

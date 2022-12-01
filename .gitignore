@@ -25,3 +25,5 @@ yarn-error.log*
 
 /src/services/
 .VSCodeCounter
+src/appconfig.ts
+global.ts

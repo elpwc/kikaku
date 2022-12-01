@@ -49,6 +49,8 @@ export default (props: P) => {
             </MenuItem>
           </nav>
           <nav className="flex">
+            <MenuItem to="/register">注册</MenuItem>
+            <MenuItem to="/login">登录</MenuItem>
             <MenuItem to="">个人页</MenuItem>
           </nav>
         </header>

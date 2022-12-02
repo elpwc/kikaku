@@ -85,7 +85,7 @@ export default (props: P) => {
         </main>
       </div>
 
-      <ParticlesBg color="#ff0000" num={10} type="fountain" bg={true} />
+      <ParticlesBg num={5} type="fountain" bg={true} />
     </>
   );
 };

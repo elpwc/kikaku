@@ -18,7 +18,7 @@ export default (props: P) => {
 
   return (
     <div className="w-full h-full flex justify-center">
-      <div className="metro-500 rounded-lg shadow-lg w-2/4 h-fit px-10 py-20 flex flex-col items-center">
+      <div className="metro-500 rounded-lg shadow-lg w-2/4 h-fit px-10 py-20 mt-32 flex flex-col items-center">
         <p style={{ margin: 0, fontWeight: 500 }} className="text-4xl pb-20">
           <span className="text-red-600">Ki</span>ʞaʞu
         </p>

@@ -58,7 +58,7 @@ export const TypePicker = (props: Props) => {
         })}
       </div>
 
-      <div className="flex">
+      <div className="flex items-center">
         <input
           value={inputValue}
           onChange={e => {

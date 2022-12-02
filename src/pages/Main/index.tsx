@@ -47,7 +47,7 @@ export default (props: P) => {
               一览
             </MenuItem>
             */}
-            <MenuItem to="/about" checked={mylocation.pathname.split('/')[1] === '?'}>
+            <MenuItem to="/about" checked={mylocation.pathname.split('/')[1] === 'about'}>
               关于
             </MenuItem>
           </nav>

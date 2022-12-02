@@ -1,6 +1,7 @@
 import React from 'react';
 import { Routes, Route } from 'react-router';
 import './App.css';
+import About from './pages/About';
 import Add from './pages/Add';
 import ErrorPage from './pages/ErrorPage';
 import Home from './pages/Home';
@@ -27,6 +28,7 @@ function App() {
 
           <Route path="register" element={<Register />}></Route>
           <Route path="login" element={<Login />}></Route>
+          <Route path="about" element={<About />}></Route>
 
           <Route path="404" element={<ErrorPage />}></Route>
           <Route path="*" element={<ErrorPage />}></Route>

@@ -27,7 +27,7 @@ export default (props: P) => {
 
   return (
     <>
-      <div className="border border-gray-300 mt-3 bg-white rounded-lg shadow-lg h-full " style={{ minWidth: '10rem' }}>
+      <div className="border border-gray-300 mt-3 bg-white rounded-lg shadow-lg h-4/5 " style={{ minWidth: '10rem', overflowY: 'scroll' }}>
         {(props.important?.length ?? 0) > 0 && (
           <AffairList state={AffairListState.PlanningImportant} draggable={props.draggable}>
             {props.important!.filter(a => {

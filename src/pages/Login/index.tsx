@@ -29,7 +29,7 @@ export default (props: P) => {
   }, []);
 
   return (
-    <div className="w-full h-full flex justify-center bg-blue-400">
+    <div className="w-full h-full flex justify-center">
       <Formik
         enableReinitialize
         initialValues={initialValues}
@@ -71,7 +71,7 @@ export default (props: P) => {
         }}
       >
         {({ values }) => (
-          <Form className="bg-white shadow-lg rounded-lg px-10 py-5 mt-5 h-fit w-300 space-y-2">
+          <Form className="metro-900 shadow-lg rounded-lg px-10 py-5 mt-5 h-fit w-300 space-y-2">
             <label className="block text-sm font-medium text-gray-700">
               用户名
               <Field id="name" name="name" className="mt-1 p-2 block w-full rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" />

@@ -1,11 +1,11 @@
 import { useEffect } from 'react';
 import { Outlet, useLocation, useNavigate, useParams } from 'react-router';
 import { userInfoStorage } from '../../globalStorages';
-import { c_userName } from '../../utils/cookies';
 import { whichWeek } from '../../utils/time';
 import { isLogin, logout } from '../../utils/userUtils';
 import './index.css';
 import { MenuItem } from './MenuItem';
+import ParticlesBg from 'particles-bg';
 
 interface P {}
 
@@ -25,8 +25,8 @@ export default (props: P) => {
 
   return (
     <>
-      <div className="h-screen bg-white">
-        <header className="shadow-md flex justify-between mb-1">
+      <div className="h-screen">
+        <header className="shadow-md flex justify-between metro-900 sticky z-50 top-0">
           <nav className="flex">
             <MenuItem to="/">
               <p style={{ margin: 0, fontWeight: 500 }}>
@@ -80,10 +80,12 @@ export default (props: P) => {
             )}
           </nav>
         </header>
-        <main className="w-full h-full bg-gray-50">
+        <main className="w-full h-full fixed">
           <Outlet />
         </main>
       </div>
+
+      <ParticlesBg color="#ff0000" num={10} type="fountain" bg={true} />
     </>
   );
 };

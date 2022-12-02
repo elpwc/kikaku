@@ -63,7 +63,7 @@ export default (props: P) => {
           />
         </div>
         <div className="w-4/5">
-          <div className="mx-10 py-10 px-40 bg-white border  border-gray-300 rounded-lg shadow-lg">
+          <div className="mx-10 py-10 px-40 metro-900 border border-gray-300 rounded-lg shadow-lg">
             <AddForm
               affair={affair}
               isModify={isModify}

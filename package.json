@@ -16,6 +16,7 @@
     "flowbite-react": "^0.3.5",
     "formik": "^2.2.9",
     "moment": "^2.29.4",
+    "particles-bg": "^2.5.5",
     "postcss-import": "^15.0.0",
     "react": "^18.2.0",
     "react-beautiful-dnd": "^13.1.1",

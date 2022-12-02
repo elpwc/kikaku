@@ -18,10 +18,12 @@ export default (props: P) => {
 
   return (
     <>
-      <div className="w-full h-full flex justify-center">
-        <Link to="add" className="">
-          先添加一些想做的事情吧！
-        </Link>
+      <div className="w-full h-full flex justify-center pt-32">
+        <div className="metro-500 shadow-lg rounded-lg w-fit h-fit flex justify-center">
+          <Link to="add" className="btn-white btn-white-ring m-20">
+            添加一些想做的事情吧！
+          </Link>
+        </div>
       </div>
     </>
   );

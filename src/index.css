@@ -16,16 +16,70 @@ code {
 @layer components {
   /* Button */
   .btn-blue {
-    @apply px-10 py-2 text-white font-normal bg-blue-500  rounded transition-all;
-    @apply hover:bg-blue-400 ;
-    @apply active:bg-blue-600  active:transition-none;
+    @apply px-10 py-2 h-fit text-white font-normal bg-blue-500 rounded transition-all;
+    @apply hover:bg-blue-400;
+    @apply active:bg-blue-600 active:transition-none;
   }
 
   .btn-blue-ring {
-    @apply  ring ring-blue-400 ;
+    @apply ring ring-blue-400;
     @apply hover:ring-blue-300;
-    @apply  active:ring-blue-400;
+    @apply active:ring-blue-400;
+  }
+
+  .btn-white {
+    @apply px-10 py-2 h-fit text-black font-normal bg-white rounded transition-all;
+    @apply hover:bg-gray-400;
+    @apply active:bg-gray-600 active:transition-none;
+  }
+
+  .btn-white-ring {
+    @apply ring ring-gray-400;
+    @apply hover:ring-gray-300;
+    @apply active:ring-gray-400;
   }
 
   /* Inputbox */
+}
+
+.metro-100 {
+  background-color: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+}
+
+.metro-500 {
+  background-color: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(12px);
+}
+
+.metro-800 {
+  background-color: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(12px);
+}
+
+.metro-900 {
+  background-color: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(12px);
+}
+
+.metro-950 {
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+}
+
+html ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+  margin-left: -8px;
+}
+
+html ::-webkit-scrollbar-thumb {
+  background: #f7f7f7;
+  border-radius: 4px;
+}
+
+html ::-webkit-scrollbar-track {
+  margin: 0;
+  background: rgb(218, 218, 218);
+  border-radius: 4px;
 }

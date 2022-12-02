@@ -477,7 +477,7 @@ export default (props: P) => {
 
   return (
     <DragDropContext onDragEnd={onDragEnd} onDragUpdate={onDragUpdate} onDragStart={onDragStart}>
-      <div className="md:flex sm:block h-full">
+      <div className="md:flex sm:block h-full metro-900">
         <div className="w-1/8">
           <AffairListContainer
             important={affairsInTypes[0]}

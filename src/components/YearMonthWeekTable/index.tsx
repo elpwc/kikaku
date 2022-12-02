@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router';
 import { RecordType } from '../../utils/enums';
 import { RecordExtend } from '../../utils/Record';
@@ -75,6 +75,24 @@ export default (props: P) => {
     }
   }, [props.children, props.type]);
 
+  /** 当前移动到的destination的id */
+  const getDragHoverId = useCallback(
+    (head: string): number => {
+      if (props.type === RecordType.day) {
+        const p = props.dragHoverId.split('_');
+        if (p[0] === 'table' && p[1] === head.toString()) {
+          if (p[2]) {
+            return Number(p[2]);
+          }
+        }
+      } else {
+        return props.dragHoverId === 'table_' + head ? -1 : -2;
+      }
+      return -2;
+    },
+    [props.dragHoverId, props.type]
+  );
+
   return (
     <div className="flex border border-gray-300 mx-10 bg-white rounded-lg shadow-lg overscroll-x-auto" style={{ overflowX: 'scroll' }}>
       {props.type === RecordType.day && <YearMonthWeekTableColumn columnType={2} />}
@@ -105,7 +123,7 @@ export default (props: P) => {
                   })
                 : []
             }
-            dragHover={props.dragHoverId === 'table_' + head}
+            dragHoverId={getDragHoverId(head)}
             columnType={0}
             onDelete={props.onDelete}
             type={props.type}

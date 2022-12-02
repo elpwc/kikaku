@@ -19,7 +19,8 @@ interface Props {
   head?: string;
   content?: RecordExtend[];
   stateInfo?: StateInfo;
-  dragHover?: boolean;
+  /** 当前drag移动到的需要高亮的列， -2: 无drag, -1: 整列, 0以上: 对于DayRecord: drag移动到的index*/
+  dragHoverId?: number;
   /** 0: normal, 1: right column, 2: left column */
   columnType: number;
   onRightColumnClick?: () => void;
@@ -61,71 +62,72 @@ export const YearMonthWeekTableColumn = (props: Props) => {
     <div
       className={
         'border-r border-gray-300 transition-all ' +
-        (props.dragHover ? 'shadow-lg' : '') +
-        (() => {
-          const date = new Date();
-          const headT = Number(props.head);
-          const currentDate = whichWeek(date.getFullYear(), date.getMonth() + 1, date.getDate());
-          switch (props.type) {
-            case RecordType.year:
-              if (headT < currentDate.y) {
-                return 'bg-gray-50';
-              } else if (headT === currentDate.y) {
-                return 'bg-blue-50';
-              }
-              return '';
-            case RecordType.month:
-              if ((props.info?.year ?? 2022) < currentDate.y) {
-                return 'bg-gray-50';
-              } else if ((props.info?.year ?? 2022) === currentDate.y) {
-                if (headT < currentDate.m) {
-                  return 'bg-gray-50';
-                } else if (headT === currentDate.m) {
-                  return 'bg-blue-50';
-                }
-              }
-
-              return '';
-            case RecordType.week: {
-              if ((props.info?.year ?? 2022) < currentDate.y) {
-                return 'bg-gray-50';
-              } else if ((props.info?.year ?? 2022) === currentDate.y) {
-                if ((props.info?.month ?? 1) < currentDate.m) {
-                  return 'bg-gray-50';
-                } else if ((props.info?.month ?? 1) === currentDate.m) {
-                  if (headT < currentDate.w) {
-                    return 'bg-gray-50';
-                  } else if (headT === currentDate.w) {
+        (props.dragHoverId === -1
+          ? 'shadow-lg bg-white ring-inset ring '
+          : (() => {
+              const date = new Date();
+              const headT = Number(props.head);
+              const currentDate = whichWeek(date.getFullYear(), date.getMonth() + 1, date.getDate());
+              switch (props.type) {
+                case RecordType.year:
+                  if (headT < currentDate.y) {
+                    return 'bg-gray-100';
+                  } else if (headT === currentDate.y) {
                     return 'bg-blue-50';
                   }
-                }
-              }
-              return '';
-            }
-            case RecordType.day: {
-              if ((props.info?.year ?? 2022) < currentDate.y) {
-                return 'bg-gray-50';
-              } else if ((props.info?.year ?? 2022) === currentDate.y) {
-                if ((props.info?.month ?? 1) < currentDate.m) {
-                  return 'bg-gray-50';
-                } else if ((props.info?.month ?? 1) === currentDate.m) {
-                  if ((props.info?.week ?? 1) < currentDate.w) {
-                    return 'bg-gray-50';
-                  } else if ((props.info?.week ?? 1) === currentDate.w) {
-                    if (headT < date.getDay()) {
-                      return 'bg-gray-50';
-                    } else if (headT === date.getDay()) {
+                  return '';
+                case RecordType.month:
+                  if ((props.info?.year ?? 2022) < currentDate.y) {
+                    return 'bg-gray-100';
+                  } else if ((props.info?.year ?? 2022) === currentDate.y) {
+                    if (headT < currentDate.m) {
+                      return 'bg-gray-100';
+                    } else if (headT === currentDate.m) {
                       return 'bg-blue-50';
                     }
                   }
+
+                  return '';
+                case RecordType.week: {
+                  if ((props.info?.year ?? 2022) < currentDate.y) {
+                    return 'bg-gray-100';
+                  } else if ((props.info?.year ?? 2022) === currentDate.y) {
+                    if ((props.info?.month ?? 1) < currentDate.m) {
+                      return 'bg-gray-100';
+                    } else if ((props.info?.month ?? 1) === currentDate.m) {
+                      if (headT < currentDate.w) {
+                        return 'bg-gray-100';
+                      } else if (headT === currentDate.w) {
+                        return 'bg-blue-50';
+                      }
+                    }
+                  }
+                  return '';
                 }
+                case RecordType.day: {
+                  if ((props.info?.year ?? 2022) < currentDate.y) {
+                    return 'bg-gray-100';
+                  } else if ((props.info?.year ?? 2022) === currentDate.y) {
+                    if ((props.info?.month ?? 1) < currentDate.m) {
+                      return 'bg-gray-100';
+                    } else if ((props.info?.month ?? 1) === currentDate.m) {
+                      if ((props.info?.week ?? 1) < currentDate.w) {
+                        return 'bg-gray-100';
+                      } else if ((props.info?.week ?? 1) === currentDate.w) {
+                        if (headT < date.getDay()) {
+                          return 'bg-gray-100';
+                        } else if (headT === date.getDay()) {
+                          return 'bg-blue-50';
+                        }
+                      }
+                    }
+                  }
+                  return '';
+                }
+                default:
+                  return '';
               }
-              return '';
-            }
-            default:
-              return '';
-          }
-        })()
+            })())
       }
     >
       {/*head*/}
@@ -208,7 +210,7 @@ export const YearMonthWeekTableColumn = (props: Props) => {
                     ref={provided.innerRef}
                     id={'table_' + props.head + '_' + item}
                     style={{ minHeight: '3rem', minWidth: '5rem' }}
-                    className="border-b-gray-300 border-b flex flex-col justify-center"
+                    className={'border-b-gray-300 border-b flex flex-col justify-center ' + (props.dragHoverId === item ? 'shadow-lg bg-white ring-inset ring ' : '')}
                   >
                     {(() => {
                       if (props.content && props.content?.length > 0) {

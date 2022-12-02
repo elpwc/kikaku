@@ -24,7 +24,6 @@ export const c_autoLogin = (state?: boolean): boolean => {
 };
 
 export const c_userName = (userName?: string): string => {
-  console.log(userName);
   if (userName !== null && userName !== undefined) {
     cookie.save('userName', userName ?? '', {});
     return userName ?? '';

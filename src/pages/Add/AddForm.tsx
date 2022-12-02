@@ -26,9 +26,7 @@ export const AddForm = (props: { isModify?: boolean; affair?: Affair | undefined
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log(props.affair);
     if (props.affair) {
-      console.log(props.affair);
       if (props.affair.type?.id) {
         setselectedTypeId(props.affair.type.id);
       }
@@ -49,19 +47,15 @@ export const AddForm = (props: { isModify?: boolean; affair?: Affair | undefined
     }
   }, [props.affair]);
 
-  console.log(props.affair, initialValues);
-
   return (
     <Formik
       /* 加了才会重复更新 */
       enableReinitialize
       initialValues={initialValues}
       onSubmit={async (values, { resetForm }) => {
-        console.log(values);
         if (values.times) {
           values.times = Number(values.times);
         }
-        console.log(values);
 
         if (props.isModify) {
           // 修改
@@ -98,7 +92,7 @@ export const AddForm = (props: { isModify?: boolean; affair?: Affair | undefined
             times: values.times ? Number(values.times) : -1,
             isImportant: values.isImportant ?? false,
             doAlarm: values.doAlarm ?? false,
-            deleted: false
+            deleted: false,
           })
             .then((e: any) => {
               console.log(e);

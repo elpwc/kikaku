@@ -1,6 +1,7 @@
-Kikaku
------------
+## Kikaku
 
 Online Schedule
 
-developing
+![alt screenshot1](./readme/kikaku1.png)
+
+![alt screenshot2](./readme/kikaku2.png)
